@@ -14,6 +14,9 @@ export function Navbar() {
           <Link href="/fighters" className="text-zinc-300 hover:text-white transition-colors font-medium">
             Fighters
           </Link>
+          <Link href="/championships" className="text-zinc-300 hover:text-white transition-colors font-medium">
+            🥇 Titles
+          </Link>
           <Link href="/search" className="text-zinc-300 hover:text-white transition-colors font-medium">
             🔍 Search
           </Link>

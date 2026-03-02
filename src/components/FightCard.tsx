@@ -75,7 +75,9 @@ export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <span className="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">{fight.weight_class}</span>
         {fight.title_fight && (
-          <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded font-semibold">🏆 TITLE</span>
+          <span className="text-xs px-2 py-1 bg-gradient-to-r from-yellow-600/30 to-yellow-500/20 text-yellow-400 rounded font-bold flex items-center gap-1.5 border border-yellow-500/30">
+            🥇 TITLE FIGHT
+          </span>
         )}
         {fight.main_event && (
           <span className="text-xs px-2 py-0.5 bg-red-500/20 text-red-400 rounded font-semibold">MAIN EVENT</span>

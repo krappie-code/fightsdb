@@ -68,6 +68,7 @@ export interface Fight {
   fighter2_id: string
   weight_class: WeightClass
   title_fight: boolean
+  title_fight_type?: 'undisputed' | 'interim' | null
   main_event: boolean
   result?: FightResult
   method?: FinishMethod
