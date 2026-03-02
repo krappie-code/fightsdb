@@ -67,6 +67,14 @@ async function getESPNCountry(fighterName: string): Promise<{ country: string; f
     const flagUrl = item.flag?.href || ''
 
     // Map 3-letter codes to 2-letter for emoji
+    // Subdivision flags (England, Scotland, Wales) — not ISO 3166-1
+    const SUBDIVISION_FLAGS: Record<string, string> = {
+      ENG: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', SCT: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', WAL: '🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+    }
+    if (SUBDIVISION_FLAGS[abbr]) {
+      return { country: flagAlt, flag: SUBDIVISION_FLAGS[abbr], flagUrl }
+    }
+
     const THREE_TO_TWO: Record<string, string> = {
       USA: 'US', BRA: 'BR', RUS: 'RU', GBR: 'GB', CAN: 'CA', MEX: 'MX',
       AUS: 'AU', NZL: 'NZ', IRL: 'IE', GEO: 'GE', KAZ: 'KZ', UZB: 'UZ',

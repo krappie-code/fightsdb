@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SpoilerRecord } from './SpoilerRecord'
 
 interface FighterCardProps {
   fighter: {
@@ -39,9 +40,7 @@ export function FighterCard({ fighter }: FighterCardProps) {
             <p className="text-zinc-500 text-sm italic">&ldquo;{fighter.nickname}&rdquo;</p>
           )}
           <div className="flex items-center gap-3 mt-1 flex-wrap">
-            <span className="text-sm font-mono text-zinc-300">
-              {fighter.wins}-{fighter.losses}-{fighter.draws}
-            </span>
+            <SpoilerRecord wins={fighter.wins} losses={fighter.losses} draws={fighter.draws} />
             <span className="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">
               {fighter.weight_class}
             </span>

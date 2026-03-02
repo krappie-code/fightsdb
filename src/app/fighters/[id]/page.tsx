@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { SpoilerRecord } from '@/components/SpoilerRecord'
 import { FighterFightList } from './FighterFightList'
 
 export const revalidate = 60
@@ -32,9 +33,7 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
           <p className="text-zinc-500 text-lg italic mt-1">&ldquo;{fighter.nickname}&rdquo;</p>
         )}
         <div className="flex items-center gap-4 mt-3">
-          <span className="text-2xl font-mono text-zinc-200">
-            {fighter.wins}-{fighter.losses}-{fighter.draws}
-          </span>
+          <SpoilerRecord wins={fighter.wins} losses={fighter.losses} draws={fighter.draws} size="lg" />
           <span className="text-zinc-500 bg-zinc-800 px-3 py-1 rounded text-sm">
             {fighter.weight_class}
           </span>
