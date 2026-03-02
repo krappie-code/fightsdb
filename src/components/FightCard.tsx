@@ -7,6 +7,7 @@ import { SpoilerToggle } from './SpoilerToggle'
 interface FightCardFighter {
   id: string
   name: string
+  image_url?: string
 }
 
 interface FightCardProps {
@@ -29,17 +30,35 @@ interface FightCardProps {
   showSpoiler?: boolean
 }
 
+function FighterAvatar({ fighter, side }: { fighter: FightCardFighter; side: 'left' | 'right' }) {
+  return (
+    <Link href={`/fighters/${fighter.id}`} className={`flex flex-col items-center gap-2 group ${side === 'right' ? 'text-right' : 'text-left'}`}>
+      <div className="w-16 h-16 rounded-full bg-zinc-800 overflow-hidden border-2 border-zinc-700 group-hover:border-red-500 transition-colors">
+        {fighter.image_url ? (
+          <img src={fighter.image_url} alt={fighter.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-zinc-500 text-lg font-bold">
+            {fighter.name.charAt(0)}
+          </div>
+        )}
+      </div>
+      <span className="font-bold text-white group-hover:text-red-400 transition-colors text-sm text-center leading-tight max-w-[120px]">
+        {fighter.name}
+      </span>
+    </Link>
+  )
+}
+
 export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
   const [revealed, setRevealed] = useState(showSpoiler)
 
-  // Determine winner name
   const winnerName = fight.result === 'Win' ? fight.fighter1.name : 
     fight.result === 'Loss' ? fight.fighter2.name : null
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 hover:border-zinc-700 transition-colors">
       {/* Tags */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
         <span className="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">{fight.weight_class}</span>
         {fight.title_fight && (
           <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded font-semibold">🏆 TITLE</span>
@@ -52,21 +71,17 @@ export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
         ))}
       </div>
 
-      {/* Fighters */}
-      <div className="flex items-center justify-between mb-3">
-        <Link href={`/fighters/${fight.fighter1.id}`} className="font-bold text-white hover:text-red-400 transition-colors text-lg">
-          {fight.fighter1.name}
-        </Link>
-        <span className="text-zinc-600 font-black text-xl mx-4">VS</span>
-        <Link href={`/fighters/${fight.fighter2.id}`} className="font-bold text-white hover:text-red-400 transition-colors text-lg text-right">
-          {fight.fighter2.name}
-        </Link>
+      {/* Fighters with images */}
+      <div className="flex items-center justify-between mb-4">
+        <FighterAvatar fighter={fight.fighter1} side="left" />
+        <span className="text-zinc-600 font-black text-2xl mx-4">VS</span>
+        <FighterAvatar fighter={fight.fighter2} side="right" />
       </div>
 
       {/* Result / Spoiler */}
       {fight.result ? (
         revealed ? (
-          <div className="bg-zinc-800 rounded-lg p-3 text-sm">
+          <div className="bg-zinc-800 rounded-lg p-3 text-sm text-center">
             {winnerName && (
               <p className="text-green-400 font-semibold">🏆 {winnerName} wins</p>
             )}
@@ -81,7 +96,7 @@ export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
           <SpoilerToggle revealed={false} onToggle={() => setRevealed(true)} />
         )
       ) : (
-        <p className="text-zinc-600 text-sm italic">No result recorded</p>
+        <p className="text-zinc-600 text-sm italic text-center">No result recorded</p>
       )}
     </div>
   )

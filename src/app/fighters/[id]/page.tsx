@@ -16,13 +16,17 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
 
   const { data: fights } = await supabase
     .from('fights')
-    .select('*, event:events(name,date), fighter1:fighters!fighter1_id(id,name), fighter2:fighters!fighter2_id(id,name)')
+    .select('*, event:events(name,date), fighter1:fighters!fighter1_id(id,name,image_url), fighter2:fighters!fighter2_id(id,name,image_url)')
     .or(`fighter1_id.eq.${id},fighter2_id.eq.${id}`)
     .order('created_at', { ascending: false })
 
   return (
     <div>
-      <div className="mb-8">
+      <div className="mb-8 flex gap-6 items-start">
+        {fighter.image_url && (
+          <img src={fighter.image_url} alt={fighter.name} className="w-32 h-32 rounded-full object-cover border-2 border-zinc-700 flex-shrink-0" />
+        )}
+        <div>
         <h1 className="text-4xl font-black text-white">{fighter.name}</h1>
         {fighter.nickname && (
           <p className="text-zinc-500 text-lg italic mt-1">&ldquo;{fighter.nickname}&rdquo;</p>
@@ -38,6 +42,7 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
         {fighter.height && <p className="text-zinc-500 text-sm mt-2">Height: {fighter.height}</p>}
         {fighter.reach && <p className="text-zinc-500 text-sm">Reach: {fighter.reach}&quot;</p>}
         {fighter.stance && <p className="text-zinc-500 text-sm">Stance: {fighter.stance}</p>}
+        </div>
       </div>
 
       <FighterFightList fights={fights ?? []} />
