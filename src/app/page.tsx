@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { EventCard } from '@/components/EventCard'
+import { Timeline } from '@/components/Timeline'
 
 export const revalidate = 60
 
@@ -22,6 +23,12 @@ export default async function HomePage() {
     fightCounts[f.event_id] = (fightCounts[f.event_id] || 0) + 1
   })
 
+  const timelineItems = events?.map(event => ({
+    key: event.id,
+    date: new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+    content: <EventCard event={event} fightCount={fightCounts[event.id]} />,
+  })) ?? []
+
   return (
     <div>
       {/* Hero */}
@@ -35,11 +42,7 @@ export default async function HomePage() {
       {/* Recent Events */}
       <section>
         <h2 className="text-2xl font-bold mb-6 text-red-500">Recent Events</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {events?.map(event => (
-            <EventCard key={event.id} event={event} fightCount={fightCounts[event.id]} />
-          ))}
-        </div>
+        <Timeline items={timelineItems} />
       </section>
     </div>
   )

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { FightCard } from '@/components/FightCard'
 import { SpoilerToggle } from '@/components/SpoilerToggle'
+import { Timeline } from '@/components/Timeline'
 
 interface Props {
   fights: any[]
@@ -10,6 +11,14 @@ interface Props {
 
 export function FighterFightList({ fights }: Props) {
   const [showAll, setShowAll] = useState(false)
+
+  const timelineItems = fights.map(fight => ({
+    key: fight.id,
+    date: fight.event?.date
+      ? new Date(fight.event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      : 'Unknown date',
+    content: <FightCard fight={fight} showSpoiler={showAll} />,
+  }))
 
   return (
     <div>
@@ -21,11 +30,7 @@ export function FighterFightList({ fights }: Props) {
           label={showAll ? '🙈 Hide All Results' : '👁️ Show All Results'}
         />
       </div>
-      <div className="grid gap-4">
-        {fights.map(fight => (
-          <FightCard key={fight.id} fight={fight} showSpoiler={showAll} />
-        ))}
-      </div>
+      <Timeline items={timelineItems} />
     </div>
   )
 }
