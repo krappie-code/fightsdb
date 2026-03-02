@@ -28,17 +28,13 @@ interface FightCardProps {
     fighter1: FightCardFighter
     fighter2: FightCardFighter
     event?: { id: string; name: string; date: string }
-    _recordAtFight?: {
-      f1: { w: number; l: number; d: number }
-      f2: { w: number; l: number; d: number }
-    } | null
   }
   showSpoiler?: boolean
 }
 
-function FighterAvatar({ fighter, side, record, showRecord }: { fighter: FightCardFighter; side: 'left' | 'right'; record?: { w: number; l: number; d: number }; showRecord?: boolean }) {
+function FighterAvatar({ fighter, side }: { fighter: FightCardFighter; side: 'left' | 'right' }) {
   return (
-    <Link href={`/fighters/${fighter.id}`} className={`flex flex-col items-center gap-1.5 group ${side === 'right' ? 'text-right' : 'text-left'}`}>
+    <Link href={`/fighters/${fighter.id}`} className={`flex flex-col items-center gap-2 group ${side === 'right' ? 'text-right' : 'text-left'}`}>
       <div className="w-16 h-16 rounded-full bg-zinc-800 overflow-hidden border-2 border-zinc-700 group-hover:border-red-500 transition-colors">
         {fighter.image_url ? (
           <img src={fighter.image_url} alt={fighter.name} className="w-full h-full object-cover" />
@@ -51,9 +47,6 @@ function FighterAvatar({ fighter, side, record, showRecord }: { fighter: FightCa
       <span className="font-bold text-white group-hover:text-red-400 transition-colors text-sm text-center leading-tight max-w-[120px]">
         {fighter.name}
       </span>
-      {showRecord && record && (
-        <span className="text-zinc-500 text-xs font-mono">{record.w}-{record.l}-{record.d}</span>
-      )}
       {fighter.birth_location && (
         <span className="text-zinc-500 text-xs text-center">{fighter.birth_location}</span>
       )}
@@ -63,12 +56,9 @@ function FighterAvatar({ fighter, side, record, showRecord }: { fighter: FightCa
 
 export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
   const [revealed, setRevealed] = useState(showSpoiler)
-  const [showRecords, setShowRecords] = useState(false)
 
   const winnerName = fight.result === 'Win' ? fight.fighter1.name : 
     fight.result === 'Loss' ? fight.fighter2.name : null
-  
-  const hasRecords = fight._recordAtFight != null
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 hover:border-zinc-700 transition-colors">
@@ -97,20 +87,9 @@ export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
 
       {/* Fighters with images */}
       <div className="flex items-center justify-between mb-4">
-        <FighterAvatar fighter={fight.fighter1} side="left" record={fight._recordAtFight?.f1} showRecord={showRecords} />
-        <div className="flex flex-col items-center mx-4">
-          <span className="text-zinc-600 font-black text-2xl">VS</span>
-          {hasRecords && (
-            <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRecords(!showRecords) }}
-              className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors mt-1"
-              title={showRecords ? 'Hide records at time of fight' : 'Show records at time of fight'}
-            >
-              {showRecords ? '🙈 hide records' : '📊 records'}
-            </button>
-          )}
-        </div>
-        <FighterAvatar fighter={fight.fighter2} side="right" record={fight._recordAtFight?.f2} showRecord={showRecords} />
+        <FighterAvatar fighter={fight.fighter1} side="left" />
+        <span className="text-zinc-600 font-black text-2xl mx-4">VS</span>
+        <FighterAvatar fighter={fight.fighter2} side="right" />
       </div>
 
       {/* Result / Spoiler */}
