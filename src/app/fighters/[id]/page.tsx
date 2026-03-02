@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { computeRecordsAtFight } from '@/lib/fight-records'
 import { SpoilerRecord } from '@/components/SpoilerRecord'
 import { FighterFightList } from './FighterFightList'
 
@@ -20,6 +21,22 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
     .select('*, event:events(id,name,date), fighter1:fighters!fighter1_id(id,name,image_url,birth_location), fighter2:fighters!fighter2_id(id,name,image_url,birth_location)')
     .or(`fighter1_id.eq.${id},fighter2_id.eq.${id}`)
     .order('created_at', { ascending: false })
+
+  // Compute records at time of each fight
+  const recordSnapshots = await computeRecordsAtFight(
+    (fights ?? []).map(f => ({
+      id: f.id,
+      fighter1_id: f.fighter1_id,
+      fighter2_id: f.fighter2_id,
+      result: f.result,
+      event: f.event,
+    }))
+  )
+
+  const fightsWithRecords = (fights ?? []).map(f => ({
+    ...f,
+    _recordAtFight: recordSnapshots[f.id] || null,
+  }))
 
   return (
     <div>
@@ -45,7 +62,7 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      <FighterFightList fights={fights ?? []} />
+      <FighterFightList fights={fightsWithRecords} />
     </div>
   )
 }

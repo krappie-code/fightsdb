@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { computeRecordsAtFight } from '@/lib/fight-records'
 import { EventFightList } from './EventFightList'
 
 export const revalidate = 60
@@ -20,6 +21,22 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
     .eq('event_id', id)
     .order('card_position', { ascending: false })
 
+  // Compute records at time of each fight
+  const recordSnapshots = await computeRecordsAtFight(
+    (fights ?? []).map(f => ({
+      id: f.id,
+      fighter1_id: f.fighter1_id,
+      fighter2_id: f.fighter2_id,
+      result: f.result,
+      event: { date: event.date },
+    }))
+  )
+
+  const fightsWithRecords = (fights ?? []).map(f => ({
+    ...f,
+    _recordAtFight: recordSnapshots[f.id] || null,
+  }))
+
   return (
     <div>
       <div className="mb-8 flex gap-6">
@@ -35,7 +52,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      <EventFightList fights={fights ?? []} />
+      <EventFightList fights={fightsWithRecords} />
     </div>
   )
 }
