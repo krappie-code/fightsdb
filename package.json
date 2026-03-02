@@ -6,9 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "tsx src/lib/scrapers/seed.ts",
+    "db:migrate": "echo 'Run supabase/migrations/001_initial_schema.sql in Supabase SQL editor'"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
+    "@types/cheerio": "^0.22.35",
+    "cheerio": "^1.2.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -21,6 +26,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
