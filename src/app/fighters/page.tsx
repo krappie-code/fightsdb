@@ -91,13 +91,21 @@ export default function FightersPage() {
             <p className="text-zinc-500 text-center py-8">No fighters found</p>
           )}
 
-          {/* Infinite scroll trigger */}
+          {/* Load more + intersection observer trigger */}
           <div ref={observerRef} className="py-8 text-center">
             {loadingMore && (
-              <p className="text-zinc-500">Loading more fighters...</p>
+              <p className="text-zinc-500 animate-pulse">Loading more fighters...</p>
+            )}
+            {hasMore && !loadingMore && (
+              <button
+                onClick={() => loadFighters(fighters.length, search)}
+                className="text-sm text-zinc-400 hover:text-white bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded transition-colors"
+              >
+                Load more fighters
+              </button>
             )}
             {!hasMore && fighters.length > 0 && (
-              <p className="text-zinc-600 text-sm">All fighters loaded</p>
+              <p className="text-zinc-600 text-sm">All {fighters.length} fighters loaded</p>
             )}
           </div>
         </>
