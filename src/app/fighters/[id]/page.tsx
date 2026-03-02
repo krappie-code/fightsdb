@@ -16,7 +16,7 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
 
   const { data: fights } = await supabase
     .from('fights')
-    .select('*, event:events(name,date), fighter1:fighters!fighter1_id(id,name,image_url), fighter2:fighters!fighter2_id(id,name,image_url)')
+    .select('*, event:events(name,date), fighter1:fighters!fighter1_id(id,name,image_url,birth_location), fighter2:fighters!fighter2_id(id,name,image_url,birth_location)')
     .or(`fighter1_id.eq.${id},fighter2_id.eq.${id}`)
     .order('created_at', { ascending: false })
 
@@ -39,7 +39,8 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
             {fighter.weight_class}
           </span>
         </div>
-        {fighter.height && <p className="text-zinc-500 text-sm mt-2">Height: {fighter.height}</p>}
+        {fighter.birth_location && <p className="text-zinc-400 text-sm mt-2">{fighter.birth_location}</p>}
+        {fighter.height && <p className="text-zinc-500 text-sm mt-1">Height: {fighter.height}</p>}
         {fighter.reach && <p className="text-zinc-500 text-sm">Reach: {fighter.reach}&quot;</p>}
         {fighter.stance && <p className="text-zinc-500 text-sm">Stance: {fighter.stance}</p>}
         </div>

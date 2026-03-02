@@ -16,7 +16,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
 
   const { data: fights } = await supabase
     .from('fights')
-    .select('*, fighter1:fighters!fighter1_id(id,name,image_url), fighter2:fighters!fighter2_id(id,name,image_url)')
+    .select('*, fighter1:fighters!fighter1_id(id,name,image_url,birth_location), fighter2:fighters!fighter2_id(id,name,image_url,birth_location)')
     .eq('event_id', id)
     .order('card_position', { ascending: false })
 

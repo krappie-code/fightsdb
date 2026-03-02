@@ -10,6 +10,7 @@ interface FighterCardProps {
     weight_class: string
     nickname?: string
     image_url?: string
+    birth_location?: string
   }
 }
 
@@ -37,13 +38,18 @@ export function FighterCard({ fighter }: FighterCardProps) {
           {fighter.nickname && (
             <p className="text-zinc-500 text-sm italic">&ldquo;{fighter.nickname}&rdquo;</p>
           )}
-          <div className="flex items-center gap-3 mt-1">
+          <div className="flex items-center gap-3 mt-1 flex-wrap">
             <span className="text-sm font-mono text-zinc-300">
               {fighter.wins}-{fighter.losses}-{fighter.draws}
             </span>
             <span className="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">
               {fighter.weight_class}
             </span>
+            {fighter.birth_location && (
+              <span className="text-xs text-zinc-400">
+                {fighter.birth_location}
+              </span>
+            )}
           </div>
         </div>
       </div>

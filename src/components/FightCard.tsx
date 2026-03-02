@@ -8,6 +8,7 @@ interface FightCardFighter {
   id: string
   name: string
   image_url?: string
+  birth_location?: string
 }
 
 interface FightCardProps {
@@ -45,6 +46,9 @@ function FighterAvatar({ fighter, side }: { fighter: FightCardFighter; side: 'le
       <span className="font-bold text-white group-hover:text-red-400 transition-colors text-sm text-center leading-tight max-w-[120px]">
         {fighter.name}
       </span>
+      {fighter.birth_location && (
+        <span className="text-zinc-500 text-xs text-center">{fighter.birth_location}</span>
+      )}
     </Link>
   )
 }
