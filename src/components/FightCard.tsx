@@ -27,6 +27,7 @@ interface FightCardProps {
     fighter2_id: string
     fighter1: FightCardFighter
     fighter2: FightCardFighter
+    event?: { id: string; name: string; date: string }
   }
   showSpoiler?: boolean
 }
@@ -61,6 +62,15 @@ export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 hover:border-zinc-700 transition-colors">
+      {/* Event link */}
+      {fight.event && (
+        <Link href={`/events/${fight.event.id}`} className="block mb-3 group/event">
+          <span className="text-sm text-zinc-400 group-hover/event:text-red-400 transition-colors">
+            📅 {fight.event.name}
+          </span>
+        </Link>
+      )}
+
       {/* Tags */}
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <span className="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">{fight.weight_class}</span>

@@ -17,7 +17,7 @@ export default async function FighterPage({ params }: { params: Promise<{ id: st
 
   const { data: fights } = await supabase
     .from('fights')
-    .select('*, event:events(name,date), fighter1:fighters!fighter1_id(id,name,image_url,birth_location), fighter2:fighters!fighter2_id(id,name,image_url,birth_location)')
+    .select('*, event:events(id,name,date), fighter1:fighters!fighter1_id(id,name,image_url,birth_location), fighter2:fighters!fighter2_id(id,name,image_url,birth_location)')
     .or(`fighter1_id.eq.${id},fighter2_id.eq.${id}`)
     .order('created_at', { ascending: false })
 
