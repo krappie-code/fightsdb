@@ -269,35 +269,35 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
 
                 /* ── Interim branch: two parallel lines via nested borders ── */
                 if (section.kind === 'interim-branch') {
-                  const items = [...section.items].reverse() // most recent first
+                  const items = [...section.items].reverse()
                   return (
-                    <div key={`branch-${sIdx}`}>
-                      {/* Merge connector (top — most recent, where branch rejoins main) */}
-                      <div className="flex items-stretch ml-[13px]">
-                        {/* Main line segment */}
+                    <div key={`branch-${sIdx}`} className="ml-[13px]">
+                      {/* ── Merge: branch rejoins main (smooth diagonal) ── */}
+                      <div className="flex items-stretch" style={{ height: 32 }}>
+                        {/* Main line */}
                         <div className="w-[2px] bg-yellow-500/20 flex-shrink-0" />
-                        {/* Angled merge connector */}
-                        <div className="w-6 flex-shrink-0 relative">
-                          <div className="absolute left-0 bottom-0 w-full h-1/2 border-l-2 border-t-2 border-orange-500/40 rounded-tl-lg" />
+                        {/* Diagonal connector: from branch (right) back to main (left) */}
+                        <div className="flex-shrink-0" style={{ width: 26 }}>
+                          <svg width="26" height="32" viewBox="0 0 26 32" className="block">
+                            <path d="M 26 0 C 26 16, 0 16, 0 32" stroke="rgb(251 146 60 / 0.5)" strokeWidth="2" fill="none" />
+                          </svg>
                         </div>
-                        {/* Label */}
-                        <div className="flex items-center py-2">
-                          <span className="text-xs text-zinc-500 italic whitespace-nowrap">Titles unified</span>
+                        <div className="flex items-center pl-2">
+                          <span className="text-[11px] text-zinc-500 italic whitespace-nowrap">titles unified</span>
                         </div>
                       </div>
 
-                      {/* Interim fights — two parallel vertical lines */}
+                      {/* ── Interim fights: main line dashed + orange branch line ── */}
                       {items.map((item: any) => (
-                        <div key={item.fight.id} className="flex items-stretch ml-[13px]">
+                        <div key={item.fight.id} className="flex items-stretch">
                           {/* Main line (dashed — champ inactive) */}
                           <div className="w-[2px] flex-shrink-0" style={{
                             backgroundImage: 'repeating-linear-gradient(to bottom, rgb(234 179 8 / 0.12) 0px, rgb(234 179 8 / 0.12) 4px, transparent 4px, transparent 8px)',
                           }} />
-                          {/* Gap between the two lines */}
-                          <div className="w-6 flex-shrink-0" />
-                          {/* Interim orange line + dot + card */}
+                          {/* Spacer between the two parallel lines */}
+                          <div className="flex-shrink-0" style={{ width: 24 }} />
+                          {/* Orange branch line + dot + card */}
                           <div className="border-l-2 border-orange-500/40 pl-4 pb-4 relative flex-1 min-w-0">
-                            {/* Dot */}
                             <div className="absolute -left-[7px] top-[16px] w-3 h-3 rounded-full bg-orange-400 border-2 border-zinc-950" />
                             <div className="pt-1">
                               <FightCard item={item} showSpoilers={showSpoilers} />
@@ -306,17 +306,18 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                         </div>
                       ))}
 
-                      {/* Fork connector (bottom — oldest, where branch splits from main) */}
-                      <div className="flex items-stretch ml-[13px]">
-                        {/* Main line segment */}
+                      {/* ── Fork: main splits to branch (smooth diagonal) ── */}
+                      <div className="flex items-stretch" style={{ height: 32 }}>
+                        {/* Main line */}
                         <div className="w-[2px] bg-yellow-500/20 flex-shrink-0" />
-                        {/* Angled fork connector */}
-                        <div className="w-6 flex-shrink-0 relative">
-                          <div className="absolute left-0 top-0 w-full h-1/2 border-l-2 border-b-2 border-orange-500/40 rounded-bl-lg" />
+                        {/* Diagonal connector: from main (left) out to branch (right) */}
+                        <div className="flex-shrink-0" style={{ width: 26 }}>
+                          <svg width="26" height="32" viewBox="0 0 26 32" className="block">
+                            <path d="M 0 0 C 0 16, 26 16, 26 32" stroke="rgb(251 146 60 / 0.5)" strokeWidth="2" fill="none" />
+                          </svg>
                         </div>
-                        {/* Label */}
-                        <div className="flex items-center py-2">
-                          <span className="text-xs text-orange-400/70 italic whitespace-nowrap">Interim title created</span>
+                        <div className="flex items-center pl-2">
+                          <span className="text-[11px] text-orange-400/60 italic whitespace-nowrap">interim title created</span>
                         </div>
                       </div>
                     </div>
