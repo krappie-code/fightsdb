@@ -29,15 +29,19 @@ export function UniversalSearch() {
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
-  // Close on outside click
+  // Close on outside click/touch
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
+    function handleClick(e: MouseEvent | TouchEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setFocused(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    document.addEventListener('touchstart', handleClick)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('touchstart', handleClick)
+    }
   }, [])
 
   // Search
@@ -175,7 +179,7 @@ export function UniversalSearch() {
       </div>
 
       {showDropdown && (
-        <div className="absolute z-50 top-full mt-2 w-full bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden max-h-[70vh] overflow-y-auto">
+        <div className="absolute z-50 top-full mt-2 w-full bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden max-h-[70vh] overflow-y-auto pointer-events-auto" style={{ isolation: 'isolate' }}>
           {loading && results.length === 0 && (
             <div className="px-4 py-6 text-center text-zinc-500">Searching...</div>
           )}
@@ -198,6 +202,13 @@ export function UniversalSearch() {
                     <Link
                       key={`${item.type}-${item.id}`}
                       href={item.href}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onTouchEnd={(e) => {
+                        e.preventDefault()
+                        setFocused(false)
+                        setQuery('')
+                        router.push(item.href)
+                      }}
                       onClick={() => { setFocused(false); setQuery('') }}
                       className={`flex items-center gap-3 px-4 py-3 transition-colors ${
                         idx === selectedIndex
