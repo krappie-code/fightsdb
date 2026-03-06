@@ -1,22 +1,25 @@
 import { supabase } from '@/lib/supabase'
-import { EventCard } from '@/components/EventCard'
+import { EventsClient } from './EventsClient'
 
 export const revalidate = 60
 
+const PAGE_SIZE = 20
+
 export default async function EventsPage() {
-  const { data: events } = await supabase
+  const { data: events, count } = await supabase
     .from('events')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('date', { ascending: false })
+    .range(0, PAGE_SIZE - 1)
 
   return (
     <div>
       <h1 className="text-3xl font-black mb-8 text-red-500">All Events</h1>
-      <div className="grid gap-4 md:grid-cols-2">
-        {events?.map(event => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </div>
+      <EventsClient
+        initialEvents={events ?? []}
+        totalCount={count ?? 0}
+        pageSize={PAGE_SIZE}
+      />
     </div>
   )
 }
