@@ -25,24 +25,23 @@ interface ChampionshipsClientProps {
   titleFights: any[]
 }
 
-/* ── Fight card (reusable for both lanes) ── */
-function FightCard({ item, showSpoilers, isInterim: forceInterim }: { item: any; showSpoilers: boolean; isInterim?: boolean }) {
-  const { fight, winner, loser, isInterim: itemInterim, isDraw, isNC, titleChanged, defense } = item
-  const isInterim = forceInterim ?? itemInterim
+/* ── Fight card ── */
+function FightCard({ item, showSpoilers }: { item: any; showSpoilers: boolean }) {
+  const { fight, winner, isInterim, isDraw, isNC, titleChanged, defense } = item
   const eventDate = fight.event?.date
     ? new Date(fight.event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
     : ''
 
   return (
-    <div className={`bg-zinc-900 border rounded-lg p-4 transition-colors ${
-      isInterim ? 'border-orange-500/20 hover:border-orange-500/40' :
+    <div className={`bg-zinc-900 border rounded-lg p-3 sm:p-4 transition-colors ${
+      isInterim ? 'border-orange-500/30 hover:border-orange-500/50' :
       titleChanged ? 'border-yellow-500/20 hover:border-yellow-500/40' :
       'border-zinc-800 hover:border-zinc-700'
     }`}>
       {/* Fighters */}
-      <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
-        <Link href={`/fighters/${fight.fighter1?.id}`} className="flex items-center gap-2 group">
-          <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-800 overflow-hidden border-2 flex-shrink-0 ${
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <Link href={`/fighters/${fight.fighter1?.id}`} className="flex items-center gap-1.5 group min-w-0">
+          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-zinc-800 overflow-hidden border-2 flex-shrink-0 ${
             showSpoilers && winner?.id === fight.fighter1?.id
               ? (isInterim ? 'border-orange-500' : 'border-yellow-500')
               : 'border-zinc-700'
@@ -55,7 +54,7 @@ function FightCard({ item, showSpoilers, isInterim: forceInterim }: { item: any;
               </div>
             )}
           </div>
-          <span className={`font-bold group-hover:text-yellow-400 transition-colors text-xs sm:text-sm ${
+          <span className={`font-bold group-hover:text-yellow-400 transition-colors text-xs sm:text-sm truncate ${
             showSpoilers && winner?.id === fight.fighter1?.id ? 'text-white' : 'text-zinc-300'
           }`}>
             {fight.fighter1?.name}
@@ -63,10 +62,10 @@ function FightCard({ item, showSpoilers, isInterim: forceInterim }: { item: any;
           </span>
         </Link>
 
-        <span className="text-zinc-600 font-bold text-xs">VS</span>
+        <span className="text-zinc-600 font-bold text-[10px] flex-shrink-0">VS</span>
 
-        <Link href={`/fighters/${fight.fighter2?.id}`} className="flex items-center gap-2 group">
-          <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-800 overflow-hidden border-2 flex-shrink-0 ${
+        <Link href={`/fighters/${fight.fighter2?.id}`} className="flex items-center gap-1.5 group min-w-0">
+          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-zinc-800 overflow-hidden border-2 flex-shrink-0 ${
             showSpoilers && winner?.id === fight.fighter2?.id
               ? (isInterim ? 'border-orange-500' : 'border-yellow-500')
               : 'border-zinc-700'
@@ -79,7 +78,7 @@ function FightCard({ item, showSpoilers, isInterim: forceInterim }: { item: any;
               </div>
             )}
           </div>
-          <span className={`font-bold group-hover:text-yellow-400 transition-colors text-xs sm:text-sm ${
+          <span className={`font-bold group-hover:text-yellow-400 transition-colors text-xs sm:text-sm truncate ${
             showSpoilers && winner?.id === fight.fighter2?.id ? 'text-white' : 'text-zinc-300'
           }`}>
             {fight.fighter2?.name}
@@ -89,7 +88,7 @@ function FightCard({ item, showSpoilers, isInterim: forceInterim }: { item: any;
       </div>
 
       {/* Tags */}
-      <div className="flex gap-2 mb-2 flex-wrap">
+      <div className="flex gap-1.5 mb-2 flex-wrap">
         {isInterim && (
           <span className="text-[10px] px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded font-bold uppercase">
             Interim Title
@@ -118,16 +117,15 @@ function FightCard({ item, showSpoilers, isInterim: forceInterim }: { item: any;
       </div>
 
       {/* Event + date */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         {fight.event && (
-          <Link href={`/events/${fight.event.id}`} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors truncate mr-2">
+          <Link href={`/events/${fight.event.id}`} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors truncate">
             {fight.event.name}
           </Link>
         )}
         <span className="text-xs text-zinc-600 flex-shrink-0">{eventDate}</span>
       </div>
 
-      {/* Method */}
       {showSpoilers && fight.method && (
         <p className="text-zinc-600 text-xs mt-1">
           {fight.method} • R{fight.round} {fight.time}
@@ -142,7 +140,6 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
   const [showSpoilers, setShowSpoilers] = useState(false)
   const [genderFilter, setGenderFilter] = useState<string>('')
 
-  // Group fights by division
   const byDivision = useMemo(() => {
     const grouped: Record<string, any[]> = {}
     for (const fight of titleFights) {
@@ -165,7 +162,6 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
     return grouped
   }, [titleFights])
 
-  // Build timeline items from fights
   const buildTimeline = (fights: any[]) => {
     const items: any[] = []
     let currentChamp: string | null = null
@@ -182,7 +178,6 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
       const newChamp = winner && !isDraw && !isNC
       const titleChanged = newChamp && winner.id !== currentChampId
 
-      // Vacancy detection
       if (newChamp && currentChampId && titleChanged && loser?.id !== currentChampId && !isInterim) {
         items.push({
           type: 'vacancy',
@@ -214,18 +209,11 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
   }
 
   /*
-   * Build branching structure:
-   * Walk the timeline. Non-interim items go on the "main" lane.
-   * Consecutive interim items form a "branch". When an interim period ends
-   * (next fight is non-interim), emit a merge row.
-   *
-   * Output is a list of "rows":
-   *   { kind: 'main', item }          — single main-lane item
-   *   { kind: 'branch-start' }        — visual fork point
-   *   { kind: 'branch-row', main?: item, interim: item } — parallel items
-   *   { kind: 'branch-end' }          — visual merge point
+   * Build display rows with branch awareness.
+   * Walk chronologically, detect interim "clusters" and wrap them
+   * in fork/merge markers.
    */
-  const buildBranchedTimeline = (timeline: any[]) => {
+  const buildDisplayRows = (timeline: any[]) => {
     const rows: any[] = []
     let i = 0
 
@@ -233,24 +221,13 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
       const item = timeline[i]
 
       if (item.type === 'fight' && item.isInterim) {
-        // Collect all consecutive interim fights
-        const interimItems: any[] = []
+        // Collect consecutive interim fights
+        rows.push({ kind: 'fork' })
         while (i < timeline.length && timeline[i].type === 'fight' && timeline[i].isInterim) {
-          interimItems.push(timeline[i])
+          rows.push({ kind: 'interim', item: timeline[i] })
           i++
         }
-
-        // Find what was on the main lane just before (for context)
-        // Collect any main-lane fights that happened during the same period
-        // (in our sorted data, interims are interleaved with main fights by date)
-        // Actually — re-examine: interims and undisputed fights happen at different times
-        // The branch shows: interim fights on the right, nothing on the left (champ inactive)
-
-        rows.push({ kind: 'branch-start' })
-        for (const intItem of interimItems) {
-          rows.push({ kind: 'branch-row', interim: intItem })
-        }
-        rows.push({ kind: 'branch-end' })
+        rows.push({ kind: 'merge' })
       } else {
         rows.push({ kind: 'main', item })
         i++
@@ -282,7 +259,6 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
           />
         </div>
 
-        {/* Filters */}
         <div className="flex flex-wrap gap-3 mb-4">
           <div className="flex gap-1 bg-zinc-900 rounded-lg p-1">
             {[
@@ -321,13 +297,11 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
         </div>
       </div>
 
-      {/* Division timelines */}
       <div className="space-y-12">
         {visibleDivisions.map(div => {
           const fights = byDivision[div.key] || []
           const timeline = buildTimeline(fights)
-          const branched = buildBranchedTimeline(timeline)
-          const displayRows = [...branched].reverse()
+          const displayRows = [...buildDisplayRows(timeline)].reverse()
 
           const lastWin = [...timeline].reverse().find(t => t.type === 'fight' && t.winner && !t.isInterim && !t.isDraw && !t.isNC)
 
@@ -360,18 +334,78 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                 </div>
               )}
 
-              {/* Branched timeline */}
-              <div className="ml-4">
+              {/* Timeline */}
+              <div className="relative ml-4">
                 {displayRows.map((row, idx) => {
-                  /* ── MAIN lane item ── */
+
+                  /* ── Fork label (shown as merge when reversed) ── */
+                  if (row.kind === 'merge') {
+                    return (
+                      <div key={`merge-${idx}`} className="relative py-2 pl-8">
+                        {/* Main line */}
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-yellow-500/20" />
+                        {/* Merge dot on main line */}
+                        <div className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                        {/* Curved connector from interim lane back to main */}
+                        <div className="absolute left-[5px] top-1/2 -translate-y-1/2">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-orange-500/50">
+                            <path d="M0 12 Q12 12 24 0" stroke="currentColor" strokeWidth="2" strokeDasharray="4 3" />
+                          </svg>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <span className="text-xs text-zinc-500 italic">↙ Titles unified</span>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  /* ── Interim fight (indented right with its own orange line) ── */
+                  if (row.kind === 'interim') {
+                    const item = row.item
+                    return (
+                      <div key={item.fight.id} className="relative pb-4">
+                        {/* Main line continues faded on the left */}
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-yellow-500/10" style={{ borderLeft: '2px dashed rgba(234,179,8,0.15)' }} />
+                        {/* Interim lane — shifted right */}
+                        <div className="ml-8 sm:ml-12 relative pl-6 border-l-2 border-orange-500/40">
+                          <div className="absolute left-[-6px] top-3 w-3 h-3 rounded-full bg-orange-400 border-2 border-zinc-950" />
+                          <FightCard item={item} showSpoilers={showSpoilers} />
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  /* ── Merge label (shown as fork when reversed) ── */
+                  if (row.kind === 'fork') {
+                    return (
+                      <div key={`fork-${idx}`} className="relative py-2 pl-8">
+                        {/* Main line */}
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-yellow-500/20" />
+                        {/* Fork dot */}
+                        <div className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-orange-400" />
+                        {/* Curved connector from main line out to interim lane */}
+                        <div className="absolute left-[5px] top-1/2 -translate-y-1/2">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-orange-500/50">
+                            <path d="M0 12 Q12 12 24 24" stroke="currentColor" strokeWidth="2" strokeDasharray="4 3" />
+                          </svg>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <span className="text-xs text-orange-400/70 italic">↗ Interim title created</span>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  /* ── Main lane fight ── */
                   if (row.kind === 'main') {
                     const item = row.item
 
                     if (item.type === 'vacancy') {
                       return (
-                        <div key={`vacancy-${idx}`} className="relative pl-8 py-3 border-l-2 border-yellow-500/20">
-                          <div className="absolute left-[-8px] top-4 w-4 h-4 rounded-full bg-zinc-800 border-2 border-red-500/50 flex items-center justify-center">
-                            <span className="text-[8px]">⚡</span>
+                        <div key={`vacancy-${idx}`} className="relative pl-8 py-3">
+                          <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-yellow-500/20" />
+                          <div className="absolute left-[-7px] top-4 w-3.5 h-3.5 rounded-full bg-zinc-800 border-2 border-red-500/50 flex items-center justify-center">
+                            <span className="text-[7px]">⚡</span>
                           </div>
                           <div className="bg-red-500/5 border border-red-500/20 border-dashed rounded-lg px-4 py-2">
                             <p className="text-red-400/80 text-sm">
@@ -385,80 +419,17 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                       )
                     }
 
-                    const { fight, winner, isInterim, titleChanged, defense, isDraw, isNC } = item
+                    const { titleChanged, defense, isDraw, isNC } = item
                     return (
-                      <div key={fight.id} className="relative pl-8 pb-4 border-l-2 border-yellow-500/20">
-                        <div className={`absolute left-[-7px] top-2 w-3.5 h-3.5 rounded-full border-2 border-zinc-950 ${
+                      <div key={item.fight.id} className="relative pl-8 pb-4">
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-yellow-500/20" />
+                        <div className={`absolute left-[-5px] top-3 w-3 h-3 rounded-full border-2 border-zinc-950 ${
                           titleChanged ? 'bg-yellow-500' :
                           defense ? 'bg-green-500' :
                           isDraw || isNC ? 'bg-zinc-500' :
                           'bg-yellow-500'
                         }`} />
                         <FightCard item={item} showSpoilers={showSpoilers} />
-                      </div>
-                    )
-                  }
-
-                  /* ── BRANCH START (merge point when reversed — displayed top-down most-recent-first) ── */
-                  if (row.kind === 'branch-end') {
-                    // In display order (reversed), branch-end comes first = visual merge
-                    return (
-                      <div key={`merge-${idx}`} className="relative pl-8 py-2">
-                        {/* Main line continues */}
-                        <div className="absolute left-[-1px] top-0 bottom-0 w-0.5 bg-yellow-500/20" />
-                        {/* Merge connector from right */}
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-yellow-500 border-2 border-zinc-950 absolute left-[-7px]" />
-                          <svg className="w-8 h-6 text-orange-500/40 absolute left-[6px] top-[2px]" viewBox="0 0 32 24" fill="none">
-                            <path d="M0 12 C8 12, 12 0, 32 0" stroke="currentColor" strokeWidth="2" fill="none" />
-                          </svg>
-                          <div className="ml-8 text-xs text-zinc-600 italic flex items-center gap-1">
-                            <span className="inline-block w-2 h-2 rounded-full bg-orange-400/60" />
-                            Titles unified
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  }
-
-                  /* ── BRANCH ROW (interim fight on the right lane) ── */
-                  if (row.kind === 'branch-row') {
-                    const item = row.interim
-                    return (
-                      <div key={item.fight.id} className="relative pb-4">
-                        {/* Two vertical lines: main (left) + interim (right offset) */}
-                        <div className="grid grid-cols-[auto_1fr] gap-0">
-                          {/* Left: main line (dormant) */}
-                          <div className="relative w-8">
-                            <div className="absolute left-[-1px] top-0 bottom-0 w-0.5 bg-yellow-500/10 border-l-2 border-dashed border-yellow-500/10" />
-                            {/* Horizontal connector to interim lane */}
-                            <div className="absolute left-0 top-4 w-full border-t-2 border-dashed border-orange-500/20" />
-                          </div>
-                          {/* Right: interim lane */}
-                          <div className="relative pl-4 border-l-2 border-orange-500/30">
-                            <div className="absolute left-[-7px] top-2 w-3 h-3 rounded-full bg-orange-400 border-2 border-zinc-950" />
-                            <FightCard item={item} showSpoilers={showSpoilers} isInterim />
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  }
-
-                  /* ── BRANCH START (fork point when reversed — displayed below) ── */
-                  if (row.kind === 'branch-start') {
-                    return (
-                      <div key={`fork-${idx}`} className="relative pl-8 py-2">
-                        <div className="absolute left-[-1px] top-0 bottom-0 w-0.5 bg-yellow-500/20" />
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-orange-400 border-2 border-zinc-950 absolute left-[-7px]" />
-                          <svg className="w-8 h-6 text-orange-500/40 absolute left-[6px] top-[2px]" viewBox="0 0 32 24" fill="none">
-                            <path d="M0 12 C8 12, 12 24, 32 24" stroke="currentColor" strokeWidth="2" fill="none" />
-                          </svg>
-                          <div className="ml-8 text-xs text-orange-400/80 italic flex items-center gap-1">
-                            <span className="inline-block w-2 h-2 rounded-full bg-orange-400/60" />
-                            Interim title created
-                          </div>
-                        </div>
                       </div>
                     )
                   }
