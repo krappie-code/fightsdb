@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Octagon background -->
+  <polygon points="10,1 22,1 31,10 31,22 22,31 10,31 1,22 1,10" fill="#ef4444" />
+  <!-- Inner octagon border -->
+  <polygon points="10,1 22,1 31,10 31,22 22,31 10,31 1,22 1,10" fill="none" stroke="#dc2626" stroke-width="1.5" />
+  <!-- F letter -->
+  <text x="16" y="23" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="20" fill="white">F</text>
+</svg>
