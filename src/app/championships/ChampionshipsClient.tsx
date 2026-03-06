@@ -288,16 +288,16 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                           style={{ overflow: 'visible' }}
                         >
                           <path
-                            d={`M ${BRANCH_GAP} 5 C ${BRANCH_GAP} ${CURVE_H * 0.6}, 1 ${CURVE_H * 0.4}, 1 ${CURVE_H}`}
+                            d={`M ${BRANCH_GAP} ${CURVE_H - 5} C ${BRANCH_GAP} ${CURVE_H * 0.4}, 1 ${CURVE_H * 0.6}, 1 5`}
                             stroke="rgb(251 146 60)"
                             strokeWidth="2.5"
                             fill="none"
                             opacity="0.6"
                           />
-                          {/* Dot at top of curve (branch end) */}
-                          <circle cx={BRANCH_GAP} cy="5" r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
-                          {/* Dot at bottom of curve (merge into main) */}
-                          <circle cx="1" cy={CURVE_H} r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          {/* Dot at bottom of curve (branch end, right side) */}
+                          <circle cx={BRANCH_GAP} cy={CURVE_H - 5} r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          {/* Dot at top of curve (merge into main, left side) */}
+                          <circle cx="1" cy="5" r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
                         </svg>
                         {/* Label */}
                         <div className="absolute flex items-center" style={{ left: BRANCH_GAP + 16, top: 8 }}>
@@ -335,16 +335,16 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                           style={{ overflow: 'visible' }}
                         >
                           <path
-                            d={`M 1 0 C 1 ${CURVE_H * 0.6}, ${BRANCH_GAP} ${CURVE_H * 0.4}, ${BRANCH_GAP} ${CURVE_H - 5}`}
+                            d={`M 1 ${CURVE_H - 5} C 1 ${CURVE_H * 0.4}, ${BRANCH_GAP} ${CURVE_H * 0.6}, ${BRANCH_GAP} 5`}
                             stroke="rgb(251 146 60)"
                             strokeWidth="2.5"
                             fill="none"
                             opacity="0.6"
                           />
-                          {/* Dot at top of curve (fork from main) */}
-                          <circle cx="1" cy="0" r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
-                          {/* Dot at bottom of curve (branch start) */}
-                          <circle cx={BRANCH_GAP} cy={CURVE_H - 5} r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          {/* Dot at bottom of curve (main line, left side) */}
+                          <circle cx="1" cy={CURVE_H - 5} r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          {/* Dot at top of curve (branch start, right side) */}
+                          <circle cx={BRANCH_GAP} cy="5" r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
                         </svg>
                         {/* Label */}
                         <div className="absolute flex items-center" style={{ left: BRANCH_GAP + 16, top: CURVE_H - 20 }}>
