@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { SpoilerToggle } from './SpoilerToggle'
 
@@ -56,6 +56,11 @@ function FighterAvatar({ fighter, side }: { fighter: FightCardFighter; side: 'le
 
 export function FightCard({ fight, showSpoiler = false }: FightCardProps) {
   const [revealed, setRevealed] = useState(showSpoiler)
+
+  // Sync with parent "Show All / Hide All" toggle
+  useEffect(() => {
+    setRevealed(showSpoiler)
+  }, [showSpoiler])
 
   const winnerName = fight.result === 'Win' ? fight.fighter1.name : 
     fight.result === 'Loss' ? fight.fighter2.name : null
