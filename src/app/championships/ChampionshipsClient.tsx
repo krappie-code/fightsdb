@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { SpoilerToggle } from '@/components/SpoilerToggle'
 
@@ -27,6 +27,9 @@ interface ChampionshipsClientProps {
 
 /* ── Fight card ── */
 function FightCard({ item, showSpoilers }: { item: any; showSpoilers: boolean }) {
+  const [localRevealed, setLocalRevealed] = useState(false)
+  useEffect(() => { setLocalRevealed(false) }, [showSpoilers])
+  const revealed = showSpoilers || localRevealed
   const { fight, winner, isInterim, isDraw, isNC, titleChanged, defense } = item
   const eventDate = fight.event?.date
     ? new Date(fight.event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
@@ -41,7 +44,7 @@ function FightCard({ item, showSpoilers }: { item: any; showSpoilers: boolean })
       <div className="flex items-center gap-2 mb-2 flex-wrap">
         <Link href={`/fighters/${fight.fighter1?.id}`} className="flex items-center gap-1.5 group min-w-0">
           <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-zinc-800 overflow-hidden border-2 flex-shrink-0 ${
-            showSpoilers && winner?.id === fight.fighter1?.id
+            revealed && winner?.id === fight.fighter1?.id
               ? (isInterim ? 'border-orange-500' : 'border-yellow-500')
               : 'border-zinc-700'
           }`}>
@@ -54,16 +57,16 @@ function FightCard({ item, showSpoilers }: { item: any; showSpoilers: boolean })
             )}
           </div>
           <span className={`font-bold group-hover:text-yellow-400 transition-colors text-xs sm:text-sm truncate ${
-            showSpoilers && winner?.id === fight.fighter1?.id ? 'text-white' : 'text-zinc-300'
+            revealed && winner?.id === fight.fighter1?.id ? 'text-white' : 'text-zinc-300'
           }`}>
             {fight.fighter1?.name}
-            {showSpoilers && winner?.id === fight.fighter1?.id && ' 🏆'}
+            {revealed && winner?.id === fight.fighter1?.id && ' 🏆'}
           </span>
         </Link>
         <span className="text-zinc-600 font-bold text-[10px] flex-shrink-0">VS</span>
         <Link href={`/fighters/${fight.fighter2?.id}`} className="flex items-center gap-1.5 group min-w-0">
           <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-zinc-800 overflow-hidden border-2 flex-shrink-0 ${
-            showSpoilers && winner?.id === fight.fighter2?.id
+            revealed && winner?.id === fight.fighter2?.id
               ? (isInterim ? 'border-orange-500' : 'border-yellow-500')
               : 'border-zinc-700'
           }`}>
@@ -76,10 +79,10 @@ function FightCard({ item, showSpoilers }: { item: any; showSpoilers: boolean })
             )}
           </div>
           <span className={`font-bold group-hover:text-yellow-400 transition-colors text-xs sm:text-sm truncate ${
-            showSpoilers && winner?.id === fight.fighter2?.id ? 'text-white' : 'text-zinc-300'
+            revealed && winner?.id === fight.fighter2?.id ? 'text-white' : 'text-zinc-300'
           }`}>
             {fight.fighter2?.name}
-            {showSpoilers && winner?.id === fight.fighter2?.id && ' 🏆'}
+            {revealed && winner?.id === fight.fighter2?.id && ' 🏆'}
           </span>
         </Link>
       </div>
@@ -87,16 +90,16 @@ function FightCard({ item, showSpoilers }: { item: any; showSpoilers: boolean })
         {isInterim && (
           <span className="text-[10px] px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded font-bold uppercase">Interim Title</span>
         )}
-        {showSpoilers && titleChanged && !isInterim && (
+        {revealed && titleChanged && !isInterim && (
           <span className="text-[10px] px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded font-bold uppercase">👑 New Champion</span>
         )}
-        {showSpoilers && defense && (
+        {revealed && defense && (
           <span className="text-[10px] px-2 py-0.5 bg-green-500/20 text-green-400 rounded font-bold uppercase">🛡️ Title Defense</span>
         )}
-        {showSpoilers && isDraw && (
+        {revealed && isDraw && (
           <span className="text-[10px] px-2 py-0.5 bg-zinc-700 text-zinc-400 rounded font-bold uppercase">Draw — Champion Retains</span>
         )}
-        {showSpoilers && isNC && (
+        {revealed && isNC && (
           <span className="text-[10px] px-2 py-0.5 bg-zinc-700 text-zinc-400 rounded font-bold uppercase">No Contest</span>
         )}
       </div>
@@ -108,8 +111,17 @@ function FightCard({ item, showSpoilers }: { item: any; showSpoilers: boolean })
         )}
         <span className="text-xs text-zinc-600 flex-shrink-0">{eventDate}</span>
       </div>
-      {showSpoilers && fight.method && (
-        <p className="text-zinc-600 text-xs mt-1">{fight.method} • R{fight.round} {fight.time}</p>
+      {revealed ? (
+        fight.method && (
+          <p className="text-zinc-600 text-xs mt-1">{fight.method} • R{fight.round} {fight.time}</p>
+        )
+      ) : (
+        <button
+          onClick={() => setLocalRevealed(true)}
+          className="mt-2 text-xs px-3 py-1 rounded bg-red-600/80 text-white hover:bg-red-600 transition-colors font-medium"
+        >
+          👁️ Reveal Result
+        </button>
       )}
     </div>
   )
@@ -201,14 +213,11 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
   return (
     <div>
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-black text-white">🏆 Titles</h1>
-            <p className="text-zinc-400 mt-1">Championship history across all UFC divisions • {titleFights.length} title fights</p>
-          </div>
-          <SpoilerToggle revealed={showSpoilers} onToggle={() => setShowSpoilers(!showSpoilers)} label={showSpoilers ? '🙈 Hide Results' : '👁️ Show Results'} />
+        <div className="mb-4">
+          <h1 className="text-4xl font-black text-white">🏆 Titles</h1>
+          <p className="text-zinc-400 mt-1">Championship history across all UFC divisions • {titleFights.length} title fights</p>
         </div>
-        <div className="flex flex-wrap gap-3 mb-4">
+        <div className="flex flex-wrap gap-3 items-center mb-4">
           <div className="flex gap-1 bg-zinc-900 rounded-lg p-1">
             {[
               { value: '', label: 'All' },
@@ -229,6 +238,7 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
               <option key={d.key} value={d.key}>{d.label} ({byDivision[d.key]?.length ?? 0})</option>
             ))}
           </select>
+          <SpoilerToggle revealed={showSpoilers} onToggle={() => setShowSpoilers(!showSpoilers)} label={showSpoilers ? '🙈 Hide All' : '👁️ Show All'} />
         </div>
       </div>
 
