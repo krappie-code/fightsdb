@@ -271,8 +271,8 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                 if (section.kind === 'interim-branch') {
                   const items = [...section.items].reverse()
                   // Line positions: main at x=0 (border), branch at x=40
-                  const BRANCH_GAP = 40
-                  const CURVE_H = 48
+                  const BRANCH_GAP = 32
+                  const CURVE_H = 40
                   return (
                     <div key={`branch-${sIdx}`} className="ml-[13px]">
                       {/* ── Merge: branch curves back into main ── */}
@@ -288,14 +288,14 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                           style={{ overflow: 'visible' }}
                         >
                           <path
-                            d={`M ${BRANCH_GAP} 0 C ${BRANCH_GAP} ${CURVE_H * 0.6}, 1 ${CURVE_H * 0.4}, 1 ${CURVE_H}`}
+                            d={`M ${BRANCH_GAP} 5 C ${BRANCH_GAP} ${CURVE_H * 0.6}, 1 ${CURVE_H * 0.4}, 1 ${CURVE_H}`}
                             stroke="rgb(251 146 60)"
                             strokeWidth="2.5"
                             fill="none"
                             opacity="0.6"
                           />
                           {/* Dot at top of curve (branch end) */}
-                          <circle cx={BRANCH_GAP} cy="0" r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          <circle cx={BRANCH_GAP} cy="5" r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
                           {/* Dot at bottom of curve (merge into main) */}
                           <circle cx="1" cy={CURVE_H} r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
                         </svg>
@@ -307,7 +307,7 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
 
                       {/* ── Interim fights: two parallel lines ── */}
                       {items.map((item: any) => (
-                        <div key={item.fight.id} className="relative pb-4" style={{ paddingLeft: BRANCH_GAP + 20 }}>
+                        <div key={item.fight.id} className="relative pb-4" style={{ paddingLeft: BRANCH_GAP + 16 }}>
                           {/* Main line (dashed — champ inactive) */}
                           <div className="absolute left-0 top-0 bottom-0 w-[2px]" style={{
                             backgroundImage: 'repeating-linear-gradient(to bottom, rgb(234 179 8 / 0.15) 0px, rgb(234 179 8 / 0.15) 4px, transparent 4px, transparent 8px)',
@@ -335,7 +335,7 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                           style={{ overflow: 'visible' }}
                         >
                           <path
-                            d={`M 1 0 C 1 ${CURVE_H * 0.6}, ${BRANCH_GAP} ${CURVE_H * 0.4}, ${BRANCH_GAP} ${CURVE_H}`}
+                            d={`M 1 0 C 1 ${CURVE_H * 0.6}, ${BRANCH_GAP} ${CURVE_H * 0.4}, ${BRANCH_GAP} ${CURVE_H - 5}`}
                             stroke="rgb(251 146 60)"
                             strokeWidth="2.5"
                             fill="none"
@@ -344,7 +344,7 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                           {/* Dot at top of curve (fork from main) */}
                           <circle cx="1" cy="0" r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
                           {/* Dot at bottom of curve (branch start) */}
-                          <circle cx={BRANCH_GAP} cy={CURVE_H} r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          <circle cx={BRANCH_GAP} cy={CURVE_H - 5} r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
                         </svg>
                         {/* Label */}
                         <div className="absolute flex items-center" style={{ left: BRANCH_GAP + 16, top: CURVE_H - 20 }}>
