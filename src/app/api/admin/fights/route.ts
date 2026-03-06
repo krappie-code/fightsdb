@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
-)
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -13,7 +15,7 @@ export async function GET(req: Request) {
   const page = parseInt(searchParams.get('page') || '0')
   const limit = 50
 
-  let query = supabase
+  let query = getSupabase()
     .from('fights')
     .select('*, fighter1:fighters!fighter1_id(id,name), fighter2:fighters!fighter2_id(id,name), event:events(id,name,date)', { count: 'exact' })
     .order('created_at', { ascending: false })
@@ -30,7 +32,7 @@ export async function PATCH(req: Request) {
   const { id, ...updates } = body
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('fights')
     .update(updates)
     .eq('id', id)

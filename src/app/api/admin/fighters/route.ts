@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
-)
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -14,7 +16,7 @@ export async function GET(req: Request) {
   const page = parseInt(searchParams.get('page') || '0')
   const limit = 50
 
-  let query = supabase.from('fighters').select('*', { count: 'exact' }).order('name')
+  let query = getSupabase().from('fighters').select('*', { count: 'exact' }).order('name')
 
   if (search) query = query.ilike('name', `%${search}%`)
   if (filter === 'no-image') query = query.is('image_url', null)
@@ -31,7 +33,7 @@ export async function PATCH(req: Request) {
   const { id, ...updates } = body
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('fighters')
     .update(updates)
     .eq('id', id)
