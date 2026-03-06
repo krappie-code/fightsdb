@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { EventCard } from '@/components/EventCard'
 import { Timeline } from '@/components/Timeline'
@@ -41,8 +42,24 @@ export default async function HomePage() {
 
       {/* Recent Events */}
       <section>
-        <h2 className="text-2xl font-bold mb-6 text-red-500">Recent Events</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-red-500">Recent Events</h2>
+          <Link
+            href="/events"
+            className="text-sm text-zinc-400 hover:text-red-500 transition-colors"
+          >
+            View all events →
+          </Link>
+        </div>
         <Timeline items={timelineItems} />
+        <div className="text-center mt-8">
+          <Link
+            href="/events"
+            className="inline-block px-6 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white hover:border-red-500/50 hover:bg-zinc-800/80 transition-all"
+          >
+            Browse all 763 events →
+          </Link>
+        </div>
       </section>
     </div>
   )
