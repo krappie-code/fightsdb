@@ -52,18 +52,17 @@ export function UniversalSearch() {
       // Search fighters
       const { data: fighters } = await supabase
         .from('fighters')
-        .select('id, name, weight_class, wins, losses, draws')
+        .select('id, name, weight_class')
         .ilike('name', `%${q}%`)
         .order('name')
         .limit(5)
 
       fighters?.forEach(f => {
-        const record = f.wins != null ? `${f.wins}-${f.losses}-${f.draws}` : ''
         searchResults.push({
           type: 'fighter',
           id: f.id,
           title: f.name,
-          subtitle: [f.weight_class, record].filter(Boolean).join(' • '),
+          subtitle: f.weight_class || 'Fighter',
           href: `/fighters/${f.id}`,
           icon: '👤',
         })
