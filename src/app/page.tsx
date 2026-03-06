@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { EventCard } from '@/components/EventCard'
 import { Timeline } from '@/components/Timeline'
+import { UniversalSearch } from '@/components/UniversalSearch'
 
 export const revalidate = 60
 
@@ -37,7 +38,8 @@ export default async function HomePage() {
         <h1 className="text-5xl md:text-7xl font-black tracking-tight">
           Fights<span className="text-red-500">DB</span>
         </h1>
-        <p className="text-zinc-400 text-xl mt-4">Browse UFC fights spoiler-free</p>
+        <p className="text-zinc-400 text-xl mt-4 mb-8">Browse UFC fights spoiler-free</p>
+        <UniversalSearch />
       </div>
 
       {/* Recent Events */}

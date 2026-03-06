@@ -9,7 +9,6 @@ const NAV_ITEMS = [
   { href: '/fights', label: 'Fights', icon: '🥊' },
   { href: '/fighters', label: 'Fighters' },
   { href: '/championships', label: 'Titles', icon: '🏆' },
-  { href: '/search', label: 'Search', icon: '🔍' },
 ]
 
 export function Navbar() {
