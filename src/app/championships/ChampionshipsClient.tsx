@@ -17,6 +17,7 @@ const DIVISIONS = [
   { key: "Women's Flyweight", label: "Women's Flyweight", gender: 'women' },
   { key: "Women's Strawweight", label: "Women's Strawweight", gender: 'women' },
   { key: "Women's Featherweight", label: "Women's Featherweight", gender: 'women' },
+  { key: 'BMF', label: 'BMF (Baddest Motherf***er)', gender: 'special' },
   { key: 'Open Weight', label: 'Open Weight (Legacy)', gender: 'legacy' },
 ]
 
@@ -33,6 +34,12 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
   const byDivision = useMemo(() => {
     const grouped: Record<string, any[]> = {}
     for (const fight of titleFights) {
+      // BMF fights go into their own category
+      if (fight.title_fight_type === 'bmf') {
+        if (!grouped['BMF']) grouped['BMF'] = []
+        grouped['BMF'].push(fight)
+        continue
+      }
       const wc = fight.weight_class || 'Unknown'
       if (!grouped[wc]) grouped[wc] = []
       grouped[wc].push(fight)
@@ -62,6 +69,7 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                     fight.result === 'Loss' ? fight.fighter1 : null
 
       const isInterim = fight.title_fight_type === 'interim'
+      const isBMF = fight.title_fight_type === 'bmf'
       const isDraw = fight.result === 'Draw'
       const isNC = fight.result === 'No Contest'
 
@@ -134,6 +142,7 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
               { value: '', label: 'All' },
               { value: 'men', label: "Men's" },
               { value: 'women', label: "Women's" },
+              { value: 'special', label: 'Special' },
               { value: 'legacy', label: 'Legacy' },
             ].map(opt => (
               <button
