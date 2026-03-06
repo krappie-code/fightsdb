@@ -104,8 +104,34 @@ export default function FightsPage() {
     return () => clearTimeout(timer)
   }, [fighterSearch, selectedFighter])
 
-  // Step 1: Fetch sorted event IDs matching venue filter
+  const hasFightFilters = !!(weightClass || titleOnly || mainEventOnly || method || selectedFighter)
+
+  // Step 1: Fetch sorted event IDs
+  // When fight-level filters are active, first find events that have matching fights
   const fetchEventIds = useCallback(async () => {
+    // If fight filters are active, find which events actually have matching fights
+    let matchingEventIds: Set<string> | null = null
+    if (hasFightFilters) {
+      let fq = supabase.from('fights').select('event_id')
+      if (weightClass) fq = fq.eq('weight_class', weightClass)
+      if (titleOnly) fq = fq.eq('title_fight', true)
+      if (mainEventOnly) fq = fq.eq('main_event', true)
+      if (method) fq = fq.eq('method', method)
+      if (selectedFighter) fq = fq.or(`fighter1_id.eq.${selectedFighter.id},fighter2_id.eq.${selectedFighter.id}`)
+
+      const eventIdSet = new Set<string>()
+      let offset = 0
+      while (true) {
+        const { data } = await fq.range(offset, offset + 999)
+        if (!data || data.length === 0) break
+        data.forEach(f => eventIdSet.add(f.event_id))
+        offset += data.length
+        if (data.length < 1000) break
+      }
+      matchingEventIds = eventIdSet
+    }
+
+    // Now get events sorted by date, optionally filtered by venue
     let query = supabase.from('events').select('id')
       .order('date', { ascending: sortBy === 'oldest' })
 
@@ -113,18 +139,22 @@ export default function FightsPage() {
       query = query.ilike('location', `%${venue}%`)
     }
 
-    // Fetch all event IDs (they're small — just UUIDs)
     const allIds: string[] = []
     let offset = 0
     while (true) {
       const { data } = await query.range(offset, offset + 499)
       if (!data || data.length === 0) break
-      allIds.push(...data.map(e => e.id))
+      data.forEach(e => {
+        // Only include events that have matching fights (if fight filters active)
+        if (!matchingEventIds || matchingEventIds.has(e.id)) {
+          allIds.push(e.id)
+        }
+      })
       offset += data.length
       if (data.length < 500) break
     }
     return allIds
-  }, [sortBy, venue])
+  }, [sortBy, venue, hasFightFilters, weightClass, titleOnly, mainEventOnly, method, selectedFighter])
 
   // Step 2: Fetch fights for a batch of event IDs
   const fetchFightsForEvents = useCallback(async (eIds: string[]) => {
