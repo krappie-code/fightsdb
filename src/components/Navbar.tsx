@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
   { href: '/events', label: 'Events' },
+  { href: '/fights', label: 'Fights', icon: '🥊' },
   { href: '/fighters', label: 'Fighters' },
   { href: '/championships', label: 'Titles', icon: '🏆' },
   { href: '/search', label: 'Search', icon: '🔍' },
