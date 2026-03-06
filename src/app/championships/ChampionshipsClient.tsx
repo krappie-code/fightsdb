@@ -259,89 +259,97 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                         titleChanged ? 'border-yellow-500/20 hover:border-yellow-500/40' :
                         'border-zinc-800 hover:border-zinc-700'
                       }`}>
-                        {/* Event + date */}
-                        <div className="flex items-center justify-between mb-2">
-                          {fight.event && (
-                            <Link href={`/events/${fight.event.id}`} className="text-sm text-zinc-400 hover:text-yellow-400 transition-colors truncate mr-2">
-                              {fight.event.name}
-                            </Link>
-                          )}
-                          <span className="text-xs text-zinc-600 flex-shrink-0">{eventDate}</span>
+                        {/* Fighters — always primary */}
+                        <div className="flex items-center gap-3 mb-2">
+                          <Link href={`/fighters/${fight.fighter1?.id}`} className="flex items-center gap-2 group">
+                            <div className={`w-10 h-10 rounded-full bg-zinc-800 overflow-hidden border-2 ${
+                              showSpoilers && winner?.id === fight.fighter1?.id
+                                ? (isInterim ? 'border-orange-500' : 'border-yellow-500')
+                                : 'border-zinc-700'
+                            }`}>
+                              {fight.fighter1?.image_url ? (
+                                <img src={fight.fighter1.image_url} alt={fight.fighter1.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm font-bold">
+                                  {fight.fighter1?.name?.charAt(0)}
+                                </div>
+                              )}
+                            </div>
+                            <span className={`font-bold group-hover:text-yellow-400 transition-colors text-sm ${
+                              showSpoilers && winner?.id === fight.fighter1?.id ? 'text-white' : 'text-zinc-300'
+                            }`}>
+                              {fight.fighter1?.name}
+                              {showSpoilers && winner?.id === fight.fighter1?.id && ' 🏆'}
+                            </span>
+                          </Link>
+
+                          <span className="text-zinc-600 font-bold text-xs">VS</span>
+
+                          <Link href={`/fighters/${fight.fighter2?.id}`} className="flex items-center gap-2 group">
+                            <div className={`w-10 h-10 rounded-full bg-zinc-800 overflow-hidden border-2 ${
+                              showSpoilers && winner?.id === fight.fighter2?.id
+                                ? (isInterim ? 'border-orange-500' : 'border-yellow-500')
+                                : 'border-zinc-700'
+                            }`}>
+                              {fight.fighter2?.image_url ? (
+                                <img src={fight.fighter2.image_url} alt={fight.fighter2.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm font-bold">
+                                  {fight.fighter2?.name?.charAt(0)}
+                                </div>
+                              )}
+                            </div>
+                            <span className={`font-bold group-hover:text-yellow-400 transition-colors text-sm ${
+                              showSpoilers && winner?.id === fight.fighter2?.id ? 'text-white' : 'text-zinc-300'
+                            }`}>
+                              {fight.fighter2?.name}
+                              {showSpoilers && winner?.id === fight.fighter2?.id && ' 🏆'}
+                            </span>
+                          </Link>
                         </div>
 
-                        {/* Tags */}
+                        {/* Tags — only show result-related tags behind spoiler */}
                         <div className="flex gap-2 mb-2 flex-wrap">
                           {isInterim && (
                             <span className="text-[10px] px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded font-bold uppercase">
                               Interim Title
                             </span>
                           )}
-                          {titleChanged && !isInterim && (
+                          {showSpoilers && titleChanged && !isInterim && (
                             <span className="text-[10px] px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded font-bold uppercase">
                               👑 New Champion
                             </span>
                           )}
-                          {defense && (
+                          {showSpoilers && defense && (
                             <span className="text-[10px] px-2 py-0.5 bg-green-500/20 text-green-400 rounded font-bold uppercase">
                               🛡️ Title Defense
                             </span>
                           )}
-                          {isDraw && (
+                          {showSpoilers && isDraw && (
                             <span className="text-[10px] px-2 py-0.5 bg-zinc-700 text-zinc-400 rounded font-bold uppercase">
                               Draw — Champion Retains
                             </span>
                           )}
-                          {isNC && (
+                          {showSpoilers && isNC && (
                             <span className="text-[10px] px-2 py-0.5 bg-zinc-700 text-zinc-400 rounded font-bold uppercase">
                               No Contest
                             </span>
                           )}
                         </div>
 
-                        {/* Fighters */}
-                        {showSpoilers ? (
-                          <div className="flex items-center gap-3">
-                            {winner && (
-                              <Link href={`/fighters/${winner.id}`} className="flex items-center gap-2 group">
-                                <div className={`w-10 h-10 rounded-full bg-zinc-800 overflow-hidden border-2 ${
-                                  isInterim ? 'border-orange-500/50' : 'border-yellow-500/50'
-                                }`}>
-                                  {winner.image_url ? (
-                                    <img src={winner.image_url} alt={winner.name} className="w-full h-full object-cover" />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm font-bold">
-                                      {winner.name.charAt(0)}
-                                    </div>
-                                  )}
-                                </div>
-                                <span className="text-white font-bold group-hover:text-yellow-400 transition-colors text-sm">
-                                  {winner.name}
-                                </span>
-                              </Link>
-                            )}
-                            <span className="text-zinc-600 text-xs">def.</span>
-                            {loser && (
-                              <Link href={`/fighters/${loser.id}`} className="text-zinc-400 hover:text-white transition-colors text-sm">
-                                {loser.name}
-                              </Link>
-                            )}
-                            {isDraw && (
-                              <span className="text-zinc-400 text-sm">
-                                {fight.fighter1?.name} vs {fight.fighter2?.name}
-                              </span>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-3">
-                            <span className="text-zinc-400 text-sm">
-                              {fight.fighter1?.name} vs {fight.fighter2?.name}
-                            </span>
-                          </div>
-                        )}
+                        {/* Event + date — secondary info */}
+                        <div className="flex items-center justify-between">
+                          {fight.event && (
+                            <Link href={`/events/${fight.event.id}`} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors truncate mr-2">
+                              {fight.event.name}
+                            </Link>
+                          )}
+                          <span className="text-xs text-zinc-600 flex-shrink-0">{eventDate}</span>
+                        </div>
 
                         {/* Method (spoiler) */}
                         {showSpoilers && fight.method && (
-                          <p className="text-zinc-600 text-xs mt-2">
+                          <p className="text-zinc-600 text-xs mt-1">
                             {fight.method} • R{fight.round} {fight.time}
                           </p>
                         )}
