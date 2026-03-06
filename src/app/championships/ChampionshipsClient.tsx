@@ -270,54 +270,85 @@ export function ChampionshipsClient({ titleFights }: ChampionshipsClientProps) {
                 /* ── Interim branch: two parallel lines via nested borders ── */
                 if (section.kind === 'interim-branch') {
                   const items = [...section.items].reverse()
+                  // Line positions: main at x=0 (border), branch at x=40
+                  const BRANCH_GAP = 40
+                  const CURVE_H = 48
                   return (
                     <div key={`branch-${sIdx}`} className="ml-[13px]">
-                      {/* ── Merge: branch rejoins main (smooth diagonal) ── */}
-                      <div className="flex items-stretch" style={{ height: 32 }}>
-                        {/* Main line */}
-                        <div className="w-[2px] bg-yellow-500/20 flex-shrink-0" />
-                        {/* Diagonal connector: from branch (right) back to main (left) */}
-                        <div className="flex-shrink-0" style={{ width: 26 }}>
-                          <svg width="26" height="32" viewBox="0 0 26 32" className="block">
-                            <path d="M 26 0 C 26 16, 0 16, 0 32" stroke="rgb(251 146 60 / 0.5)" strokeWidth="2" fill="none" />
-                          </svg>
-                        </div>
-                        <div className="flex items-center pl-2">
+                      {/* ── Merge: branch curves back into main ── */}
+                      <div className="relative" style={{ height: CURVE_H, marginLeft: 0 }}>
+                        {/* Main line (solid) */}
+                        <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-yellow-500/20" />
+                        {/* SVG curve: from branch position (right, top) to main position (left, bottom) */}
+                        <svg
+                          className="absolute left-0 top-0 block"
+                          width={BRANCH_GAP + 2}
+                          height={CURVE_H}
+                          viewBox={`0 0 ${BRANCH_GAP + 2} ${CURVE_H}`}
+                          style={{ overflow: 'visible' }}
+                        >
+                          <path
+                            d={`M ${BRANCH_GAP} 0 C ${BRANCH_GAP} ${CURVE_H * 0.6}, 1 ${CURVE_H * 0.4}, 1 ${CURVE_H}`}
+                            stroke="rgb(251 146 60)"
+                            strokeWidth="2.5"
+                            fill="none"
+                            opacity="0.6"
+                          />
+                          {/* Dot at top of curve (branch end) */}
+                          <circle cx={BRANCH_GAP} cy="0" r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          {/* Dot at bottom of curve (merge into main) */}
+                          <circle cx="1" cy={CURVE_H} r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                        </svg>
+                        {/* Label */}
+                        <div className="absolute flex items-center" style={{ left: BRANCH_GAP + 16, top: 8 }}>
                           <span className="text-[11px] text-zinc-500 italic whitespace-nowrap">titles unified</span>
                         </div>
                       </div>
 
-                      {/* ── Interim fights: main line dashed + orange branch line ── */}
+                      {/* ── Interim fights: two parallel lines ── */}
                       {items.map((item: any) => (
-                        <div key={item.fight.id} className="flex items-stretch">
+                        <div key={item.fight.id} className="relative pb-4" style={{ paddingLeft: BRANCH_GAP + 20 }}>
                           {/* Main line (dashed — champ inactive) */}
-                          <div className="w-[2px] flex-shrink-0" style={{
-                            backgroundImage: 'repeating-linear-gradient(to bottom, rgb(234 179 8 / 0.12) 0px, rgb(234 179 8 / 0.12) 4px, transparent 4px, transparent 8px)',
+                          <div className="absolute left-0 top-0 bottom-0 w-[2px]" style={{
+                            backgroundImage: 'repeating-linear-gradient(to bottom, rgb(234 179 8 / 0.15) 0px, rgb(234 179 8 / 0.15) 4px, transparent 4px, transparent 8px)',
                           }} />
-                          {/* Spacer between the two parallel lines */}
-                          <div className="flex-shrink-0" style={{ width: 24 }} />
-                          {/* Orange branch line + dot + card */}
-                          <div className="border-l-2 border-orange-500/40 pl-4 pb-4 relative flex-1 min-w-0">
-                            <div className="absolute -left-[7px] top-[16px] w-3 h-3 rounded-full bg-orange-400 border-2 border-zinc-950" />
-                            <div className="pt-1">
-                              <FightCard item={item} showSpoilers={showSpoilers} />
-                            </div>
+                          {/* Branch line (solid orange) */}
+                          <div className="absolute top-0 bottom-0 w-[2px] bg-orange-500/50" style={{ left: BRANCH_GAP }} />
+                          {/* Dot on branch line */}
+                          <div className="absolute w-3 h-3 rounded-full bg-orange-400 border-2 border-zinc-950" style={{ left: BRANCH_GAP - 5, top: 16 }} />
+                          <div className="pt-1">
+                            <FightCard item={item} showSpoilers={showSpoilers} />
                           </div>
                         </div>
                       ))}
 
-                      {/* ── Fork: main splits to branch (smooth diagonal) ── */}
-                      <div className="flex items-stretch" style={{ height: 32 }}>
-                        {/* Main line */}
-                        <div className="w-[2px] bg-yellow-500/20 flex-shrink-0" />
-                        {/* Diagonal connector: from main (left) out to branch (right) */}
-                        <div className="flex-shrink-0" style={{ width: 26 }}>
-                          <svg width="26" height="32" viewBox="0 0 26 32" className="block">
-                            <path d="M 0 0 C 0 16, 26 16, 26 32" stroke="rgb(251 146 60 / 0.5)" strokeWidth="2" fill="none" />
-                          </svg>
-                        </div>
-                        <div className="flex items-center pl-2">
-                          <span className="text-[11px] text-orange-400/60 italic whitespace-nowrap">interim title created</span>
+                      {/* ── Fork: main line splits out to branch ── */}
+                      <div className="relative" style={{ height: CURVE_H, marginLeft: 0 }}>
+                        {/* Main line (solid) */}
+                        <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-yellow-500/20" />
+                        {/* SVG curve: from main position (left, top) to branch position (right, bottom) */}
+                        <svg
+                          className="absolute left-0 top-0 block"
+                          width={BRANCH_GAP + 2}
+                          height={CURVE_H}
+                          viewBox={`0 0 ${BRANCH_GAP + 2} ${CURVE_H}`}
+                          style={{ overflow: 'visible' }}
+                        >
+                          <path
+                            d={`M 1 0 C 1 ${CURVE_H * 0.6}, ${BRANCH_GAP} ${CURVE_H * 0.4}, ${BRANCH_GAP} ${CURVE_H}`}
+                            stroke="rgb(251 146 60)"
+                            strokeWidth="2.5"
+                            fill="none"
+                            opacity="0.6"
+                          />
+                          {/* Dot at top of curve (fork from main) */}
+                          <circle cx="1" cy="0" r="5" fill="rgb(234 179 8)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                          {/* Dot at bottom of curve (branch start) */}
+                          <circle cx={BRANCH_GAP} cy={CURVE_H} r="5" fill="rgb(251 146 60)" stroke="rgb(9 9 11)" strokeWidth="2" />
+                        </svg>
+                        {/* Label */}
+                        <div className="absolute flex items-center" style={{ left: BRANCH_GAP + 16, top: CURVE_H - 20 }}>
+                          <span className="text-[11px] text-orange-400/70 italic whitespace-nowrap">interim title created</span>
                         </div>
                       </div>
                     </div>
