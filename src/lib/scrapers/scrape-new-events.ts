@@ -23,7 +23,7 @@ async function scrapeEventPage(url: string) {
   const html = await res.text()
 
   // Extract event name
-  const nameMatch = html.match(/<span class="b-content__title-highlight">\s*([^<]+)/s)
+  const nameMatch = html.match(/<span class="b-content__title-highlight">\s*([^<]+)/)
   const name = nameMatch?.[1]?.trim() || ''
 
   // Extract date

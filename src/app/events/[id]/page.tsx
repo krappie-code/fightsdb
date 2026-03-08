@@ -18,7 +18,8 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
     .from('fights')
     .select('*, fighter1:fighters!fighter1_id(id,name,image_url,birth_location), fighter2:fighters!fighter2_id(id,name,image_url,birth_location)')
     .eq('event_id', id)
-    .order('card_position', { ascending: false })
+    .order('main_event', { ascending: false })
+    .order('created_at', { ascending: true })
 
   return (
     <div>
