@@ -55,13 +55,11 @@ async function scrapeEventPage(url: string) {
     const f2url = fighterLinks[1][1]
     const f2name = fighterLinks[1][2].trim()
 
-    // Check for win/loss indicators
-    const winIndicators = [...row.matchAll(/<i[^>]*class="b-flag__inner"[^>]*>\s*(W|L|D|NC)\s*<\/i>/gi)]
+    // Check for win/loss indicators (nested inside b-flag__text)
+    const flagMatch = row.match(/<i class="b-flag__text">(win|loss|draw|nc)/i)
+    const flag = flagMatch?.[1]?.toLowerCase()
     let winner: string | undefined
-    if (winIndicators.length >= 1) {
-      const result = winIndicators[0][1].toUpperCase()
-      if (result === 'W') winner = f1name
-    }
+    if (flag === 'win') winner = f1name
 
     // Weight class
     const wcMatch = row.match(/<p class="b-fight-details__table-text">\s*([\w\s']+weight|Catch Weight|Open Weight)\s*<\/p>/i)
