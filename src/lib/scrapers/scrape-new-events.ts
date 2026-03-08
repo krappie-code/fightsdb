@@ -65,23 +65,35 @@ async function scrapeEventPage(url: string) {
     const wcMatch = row.match(/<p class="b-fight-details__table-text">\s*([\w\s']+weight|Catch Weight|Open Weight)\s*<\/p>/i)
     const weight_class = wcMatch?.[1]?.trim() || ''
 
-    // Method
-    const methodCells = [...row.matchAll(/<p class="b-fight-details__table-text">\s*([^<]+?)\s*<\/p>/g)]
-    // Typical order: fighter1, fighter2, KD, STR, TD, SUB, weight_class, Method, Round, Time
+    // Extract all <p> text content in order
+    const pTexts = [...row.matchAll(/<p class="b-fight-details__table-text"[^>]*>([\s\S]*?)<\/p>/g)]
+      .map(m => m[1].replace(/<[^>]+>/g, '').trim())
+      .filter(t => t.length > 0)
+
+    // Table order: fighter1, fighter2, KD1, KD2, STR1, STR2, TD1, TD2, SUB1, SUB2, weight_class, Method, Round, Time
     let method = '', method_detail = '', round = 0, time = ''
-    
-    // Find method - look for typical method keywords
-    for (const cell of methodCells) {
-      const text = cell[1].trim()
-      if (text.match(/^(KO\/TKO|SUB|U-DEC|S-DEC|M-DEC|DQ|Overturned|CNC|Could Not Continue)/i)) {
-        method_detail = text
-        if (text.startsWith('KO')) method = 'KO/TKO'
-        else if (text.startsWith('SUB')) method = 'Submission'
-        else if (text.includes('DEC')) method = 'Decision'
-        else if (text.startsWith('DQ')) method = 'DQ'
-        else method = text
+
+    // Find time (M:SS pattern) and round (digit before it)
+    for (let i = 0; i < pTexts.length; i++) {
+      if (pTexts[i].match(/^\d:\d{2}$/)) {
+        time = pTexts[i]
+        if (i > 0 && pTexts[i - 1].match(/^\d+$/)) {
+          round = parseInt(pTexts[i - 1])
+        }
+        // Method detail is 2 before round
+        if (i > 1) {
+          method_detail = pTexts[i - 2]
+        }
+        break
       }
     }
+
+    // Derive method from method_detail
+    if (method_detail.startsWith('KO')) method = 'KO/TKO'
+    else if (method_detail.startsWith('SUB')) method = 'Submission'
+    else if (method_detail.includes('DEC')) method = 'Decision'
+    else if (method_detail.startsWith('DQ')) method = 'DQ'
+    else if (method_detail) method = method_detail
 
     // Title fight - check for belt image
     const titleFight = row.includes('belt.png')
