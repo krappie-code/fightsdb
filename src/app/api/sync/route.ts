@@ -77,11 +77,15 @@ async function scrapeEventFights(url: string): Promise<{ fights: FightInfo[]; lo
         break
       }
     }
+    const subTech = /choke|armbar|triangle|kimura|americana|heel hook|kneebar|lock|crank|slicer|twister/i
+    const koTech = /punch|kick|knee|elbow|slam|strikes|stomp|soccer/i
     if (method_detail.startsWith('KO')) method = 'KO/TKO'
     else if (method_detail.startsWith('SUB')) method = 'Submission'
     else if (method_detail.includes('DEC')) method = 'Decision'
     else if (method_detail.startsWith('DQ')) method = 'DQ'
-    else if (method_detail) method = method_detail
+    else if (subTech.test(method_detail)) method = 'Submission'
+    else if (koTech.test(method_detail)) method = 'KO/TKO'
+    else if (method_detail) method = 'KO/TKO'
 
     fights.push({
       fighter1: links[0][2].trim(), fighter2: links[1][2].trim(),

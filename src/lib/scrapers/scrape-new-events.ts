@@ -89,11 +89,16 @@ async function scrapeEventPage(url: string) {
     }
 
     // Derive method from method_detail
+    // UFC Stats now sometimes shows specific techniques instead of KO/TKO or SUB
+    const subTechniques = /choke|armbar|triangle|kimura|americana|heel hook|kneebar|lock|crank|slicer|twister/i
+    const koTechniques = /punch|kick|knee|elbow|slam|strikes|stomp|soccer/i
     if (method_detail.startsWith('KO')) method = 'KO/TKO'
     else if (method_detail.startsWith('SUB')) method = 'Submission'
     else if (method_detail.includes('DEC')) method = 'Decision'
     else if (method_detail.startsWith('DQ')) method = 'DQ'
-    else if (method_detail) method = method_detail
+    else if (subTechniques.test(method_detail)) method = 'Submission'
+    else if (koTechniques.test(method_detail)) method = 'KO/TKO'
+    else if (method_detail) method = 'KO/TKO' // fallback for unknown techniques
 
     // Title fight - check for belt image
     const titleFight = row.includes('belt.png')
