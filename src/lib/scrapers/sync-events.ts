@@ -266,7 +266,7 @@ async function upsertFights(eventId: string, fights: ScrapedFight[], isCompleted
     }
 
     // Insert new fight
-    let result = 'Upcoming'
+    let result: string | null = null // null for upcoming
     let winnerId: string | null = null
 
     if (isCompleted) {
@@ -323,10 +323,11 @@ async function sync() {
   console.log(`\n📋 Recent completed events on UFC Stats:`)
   completedEvents.forEach(e => console.log(`  ${e.date} | ${e.name}`))
 
-  // 3. Find new completed events (after our latest)
+  // 3. Find new completed events (after our latest, but not future dates)
+  const today = new Date().toISOString().split('T')[0]
   const newCompleted = latestCompleted
-    ? completedEvents.filter(e => e.date > latestCompleted.date)
-    : completedEvents
+    ? completedEvents.filter(e => e.date > latestCompleted.date && e.date <= today)
+    : completedEvents.filter(e => e.date <= today)
 
   // Also check for events that were upcoming but are now completed
   const { data: upcomingInDb } = await sb.from('events')

@@ -167,7 +167,7 @@ export async function GET(request: Request) {
         } else {
           await sb.from('fights').insert({
             event_id: eventId, fighter1_id: f1, fighter2_id: f2,
-            winner_id: winnerId, result: winnerId ? 'Win' : (f.method ? 'No Contest' : 'Upcoming'),
+            winner_id: winnerId, result: winnerId ? 'Win' : (f.method ? 'No Contest' : null),
             method: f.method || null, method_detail: f.method_detail || null,
             round: f.round || null, time: f.time || null,
             weight_class: f.weight_class || null, title_fight: f.title_fight || false, main_event: i === 0,
@@ -204,7 +204,7 @@ export async function GET(request: Request) {
         if (!ex) {
           await sb.from('fights').insert({
             event_id: eventId, fighter1_id: f1, fighter2_id: f2,
-            result: 'Upcoming', weight_class: f.weight_class || null,
+            result: null, weight_class: f.weight_class || null,
             title_fight: f.title_fight || false, main_event: i === 0,
           })
         }
