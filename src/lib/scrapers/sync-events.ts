@@ -239,13 +239,23 @@ async function upsertFights(eventId: string, fights: ScrapedFight[], isCompleted
     const fighter1Id = await getOrCreateFighter(fight.fighter1, fight.fighter1_url)
     const fighter2Id = await getOrCreateFighter(fight.fighter2, fight.fighter2_url)
 
-    // Check if fight exists
-    const { data: existing } = await sb.from('fights')
+    // Check if fight exists (try both fighter orderings)
+    let { data: existing } = await sb.from('fights')
       .select('id, result, winner_id')
       .eq('event_id', eventId)
       .eq('fighter1_id', fighter1Id)
       .eq('fighter2_id', fighter2Id)
       .single()
+
+    if (!existing) {
+      const { data: swapped } = await sb.from('fights')
+        .select('id, result, winner_id')
+        .eq('event_id', eventId)
+        .eq('fighter1_id', fighter2Id)
+        .eq('fighter2_id', fighter1Id)
+        .single()
+      existing = swapped
+    }
 
     if (existing) {
       // Update with results if event just completed and fight has no result yet
