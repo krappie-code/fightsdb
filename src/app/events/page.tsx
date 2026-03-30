@@ -9,6 +9,7 @@ export default async function EventsPage() {
   const { data: events, count } = await supabase
     .from('events')
     .select('*', { count: 'exact' })
+    .or('status.eq.completed,status.is.null')
     .order('date', { ascending: false })
     .range(0, PAGE_SIZE - 1)
 

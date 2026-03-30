@@ -31,6 +31,7 @@ export function EventsClient({ initialEvents, totalCount, pageSize }: EventsClie
     const { data } = await clientSupabase
       .from('events')
       .select('*')
+      .or('status.eq.completed,status.is.null')
       .order('date', { ascending: false })
       .range(from, to)
 

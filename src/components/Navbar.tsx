@@ -5,11 +5,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
-  { href: '/upcoming', label: 'Upcoming', icon: '📅' },
+  { href: '/upcoming', label: 'Upcoming' },
   { href: '/events', label: 'Events' },
-  { href: '/fights', label: 'Fights', icon: '🥊' },
+  { href: '/fights', label: 'Fights' },
   { href: '/fighters', label: 'Fighters' },
-  { href: '/championships', label: 'Titles', icon: '🏆' },
+  { href: '/championships', label: 'Titles' },
 ]
 
 export function Navbar() {
@@ -35,7 +35,7 @@ export function Navbar() {
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
-              {item.icon ? `${item.icon} ${item.label}` : item.label}
+              {item.label}
             </Link>
           ))}
         </div>
@@ -72,7 +72,7 @@ export function Navbar() {
                   : 'text-zinc-400 hover:text-white hover:bg-zinc-800/30'
               }`}
             >
-              {item.icon ? `${item.icon} ${item.label}` : item.label}
+              {item.label}
             </Link>
           ))}
         </div>
