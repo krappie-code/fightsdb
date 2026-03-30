@@ -10,19 +10,27 @@ const sb = createClient(
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
+const HEADERS = {
+  'User-Agent': 'FightsDB/1.0 (https://fightsdb.vercel.app)',
+}
+
+async function wikiApi(params: string): Promise<any> {
+  const res = await fetch(`https://en.wikipedia.org/w/api.php?${params}&format=json`, { headers: HEADERS })
+  if (!res.ok) return null
+  const text = await res.text()
+  try { return JSON.parse(text) } catch { return null }
+}
+
 async function getPoster(eventName: string): Promise<string | null> {
   const titles = [
     eventName.replace(/\s+/g, '_'),
     eventName.replace(/\s+/g, '_').replace(/:/g, ''),
-    eventName.replace(/\s+/g, '_').replace('Fight_Night:_', 'Fight_Night_'),
   ]
 
   for (const title of titles) {
     try {
-      const res = await fetch(
-        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=images&format=json`
-      )
-      const data = await res.json()
+      const data = await wikiApi(`action=query&titles=${encodeURIComponent(title)}&prop=images`)
+      if (!data) continue
       const pages = data?.query?.pages || {}
       const page = Object.values(pages)[0] as any
       if (!page?.images || page.pageid === undefined) continue
@@ -32,10 +40,9 @@ async function getPoster(eventName: string): Promise<string | null> {
       )
       if (!posterFile) continue
 
-      const infoRes = await fetch(
-        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(posterFile.title)}&prop=imageinfo&iiprop=url&format=json`
-      )
-      const infoData = await infoRes.json()
+      await sleep(300)
+      const infoData = await wikiApi(`action=query&titles=${encodeURIComponent(posterFile.title)}&prop=imageinfo&iiprop=url`)
+      if (!infoData) continue
       const infoPages = infoData?.query?.pages || {}
       const infoPage = Object.values(infoPages)[0] as any
       const url = infoPage?.imageinfo?.[0]?.url
@@ -68,7 +75,7 @@ async function main() {
     if (checked % 50 === 0) {
       console.log(`  ... ${checked}/${events?.length} checked, ${found} found`)
     }
-    await sleep(600)
+    await sleep(1000)
   }
 
   console.log(`\n📊 Found posters for ${found} / ${checked} events`)
