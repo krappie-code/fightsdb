@@ -1,134 +1,157 @@
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
-import { EventCard } from '@/components/EventCard'
-import { Timeline } from '@/components/Timeline'
-import { UniversalSearch } from '@/components/UniversalSearch'
 
-export const revalidate = 60
-
-export default async function HomePage() {
-  // Recent completed events
-  const { data: recentEvents, count: totalCompleted } = await supabase
-    .from('events')
-    .select('*', { count: 'exact' })
-    .or('status.eq.completed,status.is.null')
-    .order('date', { ascending: false })
-    .limit(10)
-
-  // Upcoming events
-  const { data: upcomingEvents } = await supabase
-    .from('events')
-    .select('*')
-    .eq('status', 'upcoming')
-    .order('date', { ascending: true })
-    .limit(5)
-
-  // Get fight counts for recent events
-  const recentIds = recentEvents?.map(e => e.id) ?? []
-  const { data: recentFights } = await supabase
-    .from('fights')
-    .select('event_id')
-    .in('event_id', recentIds)
-
-  const fightCounts: Record<string, number> = {}
-  recentFights?.forEach(f => {
-    fightCounts[f.event_id] = (fightCounts[f.event_id] || 0) + 1
-  })
-
-  const timelineItems = recentEvents?.map(event => ({
-    key: event.id,
-    date: new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-    content: <EventCard event={event} fightCount={fightCounts[event.id]} />,
-  })) ?? []
-
+export default function Home() {
   return (
-    <div>
-      {/* Hero */}
-      <div className="text-center py-16">
-        <h1 className="text-5xl md:text-7xl font-black tracking-tight">
-          Fights<span className="text-red-500">DB</span>
-        </h1>
-        <p className="text-zinc-400 text-xl mt-4 mb-8">Browse UFC fights spoiler-free</p>
-        <UniversalSearch />
-      </div>
-
-      {/* Recent Events */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-red-500">Recent Events</h2>
-          <Link
-            href="/events"
-            className="text-sm text-zinc-400 hover:text-red-500 transition-colors"
-          >
-            View all events →
-          </Link>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <nav className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-red-600">FightsDB</h1>
+            <div className="flex items-center gap-6">
+              <Link href="/fights" className="text-gray-600 hover:text-gray-900">
+                Fights
+              </Link>
+              <Link href="/quiz/daily" className="text-gray-600 hover:text-gray-900">
+                Daily Quiz
+              </Link>
+              <Link href="/about" className="text-gray-600 hover:text-gray-900">
+                About
+              </Link>
+            </div>
+          </nav>
         </div>
-        <Timeline items={timelineItems} />
-        <div className="text-center mt-8">
-          <Link
-            href="/events"
-            className="inline-block px-6 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white hover:border-red-500/50 hover:bg-zinc-800/80 transition-all"
-          >
-            Browse all {totalCompleted ?? 0} events →
-          </Link>
-        </div>
-      </section>
+      </header>
 
-      {/* Upcoming Events */}
-      {upcomingEvents && upcomingEvents.length > 0 && (
-        <section className="mt-16">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-red-500">Upcoming Events</h2>
-            <Link
-              href="/upcoming"
-              className="text-sm text-zinc-400 hover:text-red-500 transition-colors"
+      {/* Hero Section */}
+      <main className="py-16">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <h2 className="text-5xl font-bold text-gray-900 mb-6">
+            The Ultimate UFC Database
+          </h2>
+          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+            Comprehensive UFC fight database with ratings, spoiler protection, and smart filtering. 
+            Discover fights, rate performances, and test your MMA knowledge!
+          </p>
+
+          {/* Feature Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {/* Fight Database */}
+            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+              <div className="text-4xl mb-4">🥊</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Fight Database
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Browse thousands of UFC fights with spoiler protection, detailed stats, and community ratings.
+              </p>
+              <Link 
+                href="/fights" 
+                className="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Browse Fights
+              </Link>
+            </div>
+
+            {/* Daily Quiz */}
+            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+              <div className="text-4xl mb-4">🧠</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Daily Quiz
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Test your UFC knowledge with our daily quiz. New questions every day across all difficulty levels!
+              </p>
+              <Link 
+                href="/quiz/daily" 
+                className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Take Today's Quiz
+              </Link>
+            </div>
+
+            {/* Smart Filtering */}
+            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+              <div className="text-4xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Smart Discovery
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Advanced filtering by weight class, finish type, rating, and more. Find your next favorite fight!
+              </p>
+              <Link 
+                href="/search" 
+                className="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Discover Fights
+              </Link>
+            </div>
+          </div>
+
+          {/* Quiz CTA */}
+          <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-8 rounded-xl mb-8">
+            <h3 className="text-2xl font-bold mb-4">📅 Today's UFC Quiz is Ready!</h3>
+            <p className="text-lg mb-6 text-red-100">
+              Test your knowledge with 10 questions covering fights, fighters, and events. 
+              Can you achieve Encyclopedia status?
+            </p>
+            <Link 
+              href="/quiz/daily"
+              className="inline-block bg-white text-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
-              View all upcoming →
+              Start Quiz 🧠
             </Link>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {upcomingEvents.map(event => {
-              const eventDate = new Date(event.date + 'T00:00:00Z')
-              const now = new Date()
-              const days = Math.ceil((eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
-              const isThisWeek = days >= 0 && days <= 7
 
-              return (
-                <Link key={event.id} href={`/events/${event.id}`}>
-                  <div className={`bg-zinc-900 border rounded-lg p-4 hover:bg-zinc-800/50 transition-all cursor-pointer ${
-                    isThisWeek ? 'border-red-500/50' : 'border-zinc-800'
-                  }`}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-bold text-white">{event.name}</h3>
-                        <p className="text-zinc-400 text-sm mt-1">
-                          {eventDate.toLocaleDateString('en-US', {
-                            weekday: 'short',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
-                        </p>
-                        {event.location && (
-                          <p className="text-zinc-500 text-xs mt-0.5">{event.location}</p>
-                        )}
-                      </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        days === 0
-                          ? 'bg-red-500 text-white'
-                          : isThisWeek
-                            ? 'bg-red-500/20 text-red-400'
-                            : 'bg-zinc-800 text-zinc-400'
-                      }`}>
-                        {days === 0 ? 'Today!' : days === 1 ? 'Tomorrow' : days < 7 ? `${days} days` : `${Math.floor(days / 7)}w`}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              )
-            })}
+          {/* Features List */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="text-left">
+              <h4 className="font-semibold text-gray-900 mb-3">🙈 Spoiler Protection</h4>
+              <p className="text-gray-600">
+                Browse fights without spoilers. Results hidden until you choose to reveal them.
+              </p>
+            </div>
+            <div className="text-left">
+              <h4 className="font-semibold text-gray-900 mb-3">⭐ Community Ratings</h4>
+              <p className="text-gray-600">
+                Rate fights and see community sentiment. Find the most exciting matchups.
+              </p>
+            </div>
+            <div className="text-left">
+              <h4 className="font-semibold text-gray-900 mb-3">📺 Highlight Integration</h4>
+              <p className="text-gray-600">
+                Watch official UFC highlights and clips directly from fight cards.
+              </p>
+            </div>
+            <div className="text-left">
+              <h4 className="font-semibold text-gray-900 mb-3">🎯 Daily Challenges</h4>
+              <p className="text-gray-600">
+                Fresh quiz questions every day. Share your scores and challenge friends!
+              </p>
+            </div>
           </div>
-        </section>
-      )}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-8">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <p className="text-gray-400 mb-4">
+            © 2026 FightsDB. The ultimate destination for UFC fight discovery and trivia.
+          </p>
+          <div className="space-x-6">
+            <Link href="/privacy" className="text-gray-400 hover:text-white text-sm">
+              Privacy
+            </Link>
+            <Link href="/terms" className="text-gray-400 hover:text-white text-sm">
+              Terms
+            </Link>
+            <Link href="/contact" className="text-gray-400 hover:text-white text-sm">
+              Contact
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
