@@ -131,8 +131,9 @@ export default function FightsPage() {
       matchingEventIds = eventIdSet
     }
 
-    // Now get events sorted by date, optionally filtered by venue
+    // Now get events sorted by date, only completed events
     let query = supabase.from('events').select('id')
+      .or('status.eq.completed,status.is.null')
       .order('date', { ascending: sortBy === 'oldest' })
 
     if (venue) {
