@@ -1,5 +1,6 @@
 import { QuizInterface } from '@/components/Quiz/QuizInterface'
 import { Metadata } from 'next'
+import { QuizResult } from '@/types/quiz'
 
 export const metadata: Metadata = {
   title: 'Daily UFC Quiz | FightsDB',
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 }
 
 export default function DailyQuizPage() {
-  const handleQuizComplete = (result: any) => {
+  const handleQuizComplete = (result: QuizResult) => {
     // Could save to local storage or send to analytics
     console.log('Quiz completed:', result)
     
