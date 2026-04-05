@@ -1,0 +1,10 @@
+DEPLOYMENT TEST - April 5, 2026 21:47 UTC
+
+This file will help us verify if ANY deployments are working at all.
+
+If you can see this file at https://fightsdb.vercel.app/DEPLOYMENT_TEST.txt 
+then deployments are working and the issue is specifically with the quiz build.
+
+If you can't see this file, then the GitHub → Vercel integration is completely broken.
+
+Test timestamp: 2026-04-05 21:47:30 UTC
