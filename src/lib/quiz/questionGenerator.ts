@@ -1,10 +1,22 @@
-// Quiz Question Generator - Build Fix
-// Simplified version to resolve build issues
-
+// Quiz Question Generator - Updated with Recent Events
 import { QuizQuestion, DailyQuizConfig, DEFAULT_DAILY_CONFIG } from '@/types/quiz'
 
-// Simplified mock fight data for MVP
+// Updated mock fight data with recent events
 const MOCK_FIGHTS = [
+  // Recent - March 28, 2026
+  {
+    id: '6',
+    event: { name: 'UFC Fight Night: Adesanya vs. Pyfer', date: '2026-03-28', location: 'Seattle, WA' },
+    fighter1: { name: 'Israel Adesanya', nickname: 'The Last Stylebender' },
+    fighter2: { name: 'Joe Pyfer', nickname: 'Bodybagz' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Middleweight',
+    title_fight: false
+  },
+  // Classic fights
   {
     id: '1',
     event: { name: 'UFC 285', date: '2023-03-04', location: 'Las Vegas, NV' },
@@ -64,20 +76,44 @@ const MOCK_FIGHTS = [
     time: '4:59',
     weight_class: 'Featherweight',
     title_fight: false
+  },
+  // March 7, 2026 event
+  {
+    id: '7',
+    event: { name: 'UFC 326: Holloway vs. Oliveira 2', date: '2026-03-07', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Max Holloway', nickname: 'Blessed' },
+    fighter2: { name: 'Charles Oliveira', nickname: 'Do Bronx' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Featherweight',
+    title_fight: true
+  },
+  // March 21, 2026 event
+  {
+    id: '8',
+    event: { name: 'UFC Fight Night: Evloev vs. Murphy', date: '2026-03-21', location: 'London, England' },
+    fighter1: { name: 'Movsar Evloev', nickname: '' },
+    fighter2: { name: 'Lerone Murphy', nickname: 'The Miracle' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Featherweight',
+    title_fight: false
   }
 ]
 
 export class QuizQuestionGenerator {
   
   generateDailyQuiz(date: string, config: DailyQuizConfig = DEFAULT_DAILY_CONFIG): QuizQuestion[] {
-    console.log(`🎯 Generating daily quiz for ${date}`)
-    
     const seed = this.dateToSeed(date)
     const rng = this.seededRandom(seed)
     
     const questions: QuizQuestion[] = []
     
-    // Generate easy questions (7)
+    // Generate easy questions (7) - Mix recent and classic fights
     for (let i = 0; i < 7; i++) {
       const fight = MOCK_FIGHTS[Math.floor(rng() * MOCK_FIGHTS.length)]
       questions.push({
@@ -93,7 +129,7 @@ export class QuizQuestionGenerator {
       })
     }
     
-    // Generate medium questions (2)
+    // Generate medium questions (2) - Include recent events
     for (let i = 0; i < 2; i++) {
       const fight = MOCK_FIGHTS[Math.floor(rng() * MOCK_FIGHTS.length)]
       questions.push({
@@ -109,17 +145,17 @@ export class QuizQuestionGenerator {
       })
     }
     
-    // Generate hard question (1)
-    const fight = MOCK_FIGHTS[0]
+    // Generate hard question (1) - Recent event knowledge
+    const recentFight = MOCK_FIGHTS[0] // Adesanya vs Pyfer
     questions.push({
       id: 'hard-1',
-      fight_id: fight.id,
-      type: 'year',
+      fight_id: recentFight.id,
+      type: 'event',
       difficulty: 'hard',
-      question: `In what year did ${fight.fighter1.name} vs ${fight.fighter2.name} take place?`,
-      options: ['2022', '2023', '2024', '2025'],
-      correct_answer: '2023',
-      explanation: `This fight happened in 2023.`,
+      question: `At which city did Adesanya vs Pyfer take place in March 2026?`,
+      options: ['Las Vegas', 'Seattle', 'New York', 'Miami'],
+      correct_answer: 'Seattle',
+      explanation: `UFC Fight Night: Adesanya vs. Pyfer took place in Seattle on March 28, 2026.`,
       points: 30
     })
     
