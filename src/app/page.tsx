@@ -2,156 +2,138 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <nav className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-red-600">FightsDB</h1>
-            <div className="flex items-center gap-6">
-              <Link href="/fights" className="text-gray-600 hover:text-gray-900">
-                Fights
-              </Link>
-              <Link href="/quiz/daily" className="text-gray-600 hover:text-gray-900">
-                Daily Quiz
-              </Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900">
-                About
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </header>
-
+    <main className="min-h-screen bg-slate-900">
       {/* Hero Section */}
-      <main className="py-16">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-white mb-6">
             The Ultimate UFC Database
-          </h2>
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+          </h1>
+          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
             Comprehensive UFC fight database with ratings, spoiler protection, and smart filtering. 
             Discover fights, rate performances, and test your MMA knowledge!
           </p>
+        </div>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            {/* Fight Database */}
-            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-4">🥊</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Fight Database
+        {/* Recent Events Section */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">Recent Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Recent Event Cards */}
+            <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 hover:bg-slate-750 transition-colors">
+              <div className="text-sm text-gray-400 mb-2">April 5, 2026</div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                UFC Fight Night: Moicano vs Duncan
               </h3>
-              <p className="text-gray-600 mb-6">
-                Browse thousands of UFC fights with spoiler protection, detailed stats, and community ratings.
-              </p>
+              <p className="text-gray-300 text-sm mb-4">Las Vegas, Nevada</p>
               <Link 
-                href="/fights" 
-                className="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                href="/events" 
+                className="text-red-400 hover:text-red-300 text-sm font-medium"
               >
-                Browse Fights
+                View Fight Card →
+              </Link>
+            </div>
+            
+            <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 hover:bg-slate-750 transition-colors">
+              <div className="text-sm text-gray-400 mb-2">March 28, 2026</div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                UFC Fight Night: Adesanya vs Pyfer
+              </h3>
+              <p className="text-gray-300 text-sm mb-4">Seattle, Washington</p>
+              <Link 
+                href="/events" 
+                className="text-red-400 hover:text-red-300 text-sm font-medium"
+              >
+                View Fight Card →
               </Link>
             </div>
 
-            {/* Daily Quiz */}
-            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-4">🧠</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Daily Quiz
+            <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 hover:bg-slate-750 transition-colors">
+              <div className="text-sm text-gray-400 mb-2">March 21, 2026</div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                UFC Fight Night: Evloev vs Murphy
               </h3>
-              <p className="text-gray-600 mb-6">
-                Test your UFC knowledge with our daily quiz. New questions every day across all difficulty levels!
-              </p>
+              <p className="text-gray-300 text-sm mb-4">London, England</p>
               <Link 
-                href="/quiz/daily" 
-                className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                href="/events" 
+                className="text-red-400 hover:text-red-300 text-sm font-medium"
               >
-                Take Today's Quiz
-              </Link>
-            </div>
-
-            {/* Smart Filtering */}
-            <div className="bg-white p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Smart Discovery
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Advanced filtering by weight class, finish type, rating, and more. Find your next favorite fight!
-              </p>
-              <Link 
-                href="/search" 
-                className="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Discover Fights
+                View Fight Card →
               </Link>
             </div>
           </div>
-
-          {/* Quiz CTA */}
-          <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-8 rounded-xl mb-8">
-            <h3 className="text-2xl font-bold mb-4">📅 Today's UFC Quiz is Ready!</h3>
-            <p className="text-lg mb-6 text-red-100">
-              Test your knowledge with 10 questions covering fights, fighters, and events. 
-              Can you achieve Encyclopedia status?
-            </p>
+          <div className="text-center mt-8">
             <Link 
-              href="/quiz/daily"
-              className="inline-block bg-white text-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              href="/events" 
+              className="inline-block bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors"
             >
-              Start Quiz 🧠
+              View All Recent Events
             </Link>
           </div>
+        </div>
 
-          {/* Features List */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="text-left">
-              <h4 className="font-semibold text-gray-900 mb-3">🙈 Spoiler Protection</h4>
-              <p className="text-gray-600">
-                Browse fights without spoilers. Results hidden until you choose to reveal them.
-              </p>
+        {/* Upcoming Events Section */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">Upcoming Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 hover:bg-slate-750 transition-colors">
+              <div className="text-sm text-green-400 mb-2 font-medium">April 11, 2026</div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                UFC 327: Prochazka vs Ulberg
+              </h3>
+              <p className="text-gray-300 text-sm mb-4">Miami, Florida</p>
+              <div className="text-xs text-gray-400">4 days away</div>
             </div>
-            <div className="text-left">
-              <h4 className="font-semibold text-gray-900 mb-3">⭐ Community Ratings</h4>
-              <p className="text-gray-600">
-                Rate fights and see community sentiment. Find the most exciting matchups.
-              </p>
+
+            <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 hover:bg-slate-750 transition-colors">
+              <div className="text-sm text-green-400 mb-2 font-medium">April 18, 2026</div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                UFC Fight Night: Burns vs Malott
+              </h3>
+              <p className="text-gray-300 text-sm mb-4">Winnipeg, Manitoba</p>
+              <div className="text-xs text-gray-400">11 days away</div>
             </div>
-            <div className="text-left">
-              <h4 className="font-semibold text-gray-900 mb-3">📺 Highlight Integration</h4>
-              <p className="text-gray-600">
-                Watch official UFC highlights and clips directly from fight cards.
-              </p>
-            </div>
-            <div className="text-left">
-              <h4 className="font-semibold text-gray-900 mb-3">🎯 Daily Challenges</h4>
-              <p className="text-gray-600">
-                Fresh quiz questions every day. Share your scores and challenge friends!
-              </p>
+
+            <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 hover:bg-slate-750 transition-colors">
+              <div className="text-sm text-green-400 mb-2 font-medium">April 25, 2026</div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                UFC Fight Night: Sterling vs Zalal
+              </h3>
+              <p className="text-gray-300 text-sm mb-4">Las Vegas, Nevada</p>
+              <div className="text-xs text-gray-400">18 days away</div>
             </div>
           </div>
+          <div className="text-center mt-8">
+            <Link 
+              href="/upcoming" 
+              className="inline-block bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
+            >
+              View All Upcoming Events
+            </Link>
+          </div>
         </div>
-      </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <p className="text-gray-400 mb-4">
-            © 2026 FightsDB. The ultimate destination for UFC fight discovery and trivia.
+        {/* Today's Quiz CTA */}
+        <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-xl p-8 text-center">
+          <div className="text-4xl mb-4">🧠</div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Today's UFC Quiz is Ready!
+          </h2>
+          <p className="text-lg text-red-100 mb-8 max-w-2xl mx-auto">
+            Test your knowledge with 10 questions covering fights, fighters, and events. 
+            Can you achieve Encyclopedia status?
           </p>
-          <div className="space-x-6">
-            <Link href="/privacy" className="text-gray-400 hover:text-white text-sm">
-              Privacy
-            </Link>
-            <Link href="/terms" className="text-gray-400 hover:text-white text-sm">
-              Terms
-            </Link>
-            <Link href="/contact" className="text-gray-400 hover:text-white text-sm">
-              Contact
-            </Link>
+          <Link 
+            href="/quiz/daily"
+            className="inline-block bg-white text-red-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+          >
+            Start Today's Quiz 🥊
+          </Link>
+          <div className="mt-4 text-sm text-red-200">
+            New questions daily • Spoiler-free • Challenge friends
           </div>
         </div>
-      </footer>
-    </div>
+      </div>
+    </main>
   )
 }
