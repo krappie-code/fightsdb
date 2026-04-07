@@ -57,8 +57,9 @@ export class QuizLeaderboardAPI {
   static async getLeaderboard(date?: string): Promise<LeaderboardEntry[]> {
     try {
       const queryDate = date || new Date().toISOString().split('T')[0]
+      console.log(`📊 Fetching leaderboard for ${queryDate}...`)
+      
       const response = await fetch(`/api/quiz/leaderboard?date=${queryDate}`)
-
       const result = await response.json()
       
       if (!response.ok) {
@@ -68,8 +69,19 @@ export class QuizLeaderboardAPI {
         return this.getLeaderboardFromLocalStorage(date)
       }
 
-      console.log(`Loaded ${result.leaderboard?.length || 0} entries from server leaderboard`)
-      return result.leaderboard || []
+      const entries = result.leaderboard || []
+      console.log(`✅ Loaded ${entries.length} entries from server leaderboard`)
+      
+      if (entries.length === 0) {
+        console.log('📝 No scores yet today - checking localStorage as backup...')
+        const localEntries = this.getLeaderboardFromLocalStorage(date)
+        if (localEntries.length > 0) {
+          console.log(`📱 Found ${localEntries.length} local entries`)
+          return localEntries
+        }
+      }
+      
+      return entries
     } catch (error) {
       console.error('Error fetching server leaderboard:', error)
       console.log('Using local storage leaderboard...')

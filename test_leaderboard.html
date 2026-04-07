@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test FightsDB Leaderboard API</title>
+</head>
+<body>
+    <h1>FightsDB Leaderboard API Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            
+            try {
+                // Test GET leaderboard
+                console.log('🔍 Testing GET /api/quiz/leaderboard...');
+                const getResponse = await fetch('https://fightsdb.vercel.app/api/quiz/leaderboard?date=2026-04-07');
+                const getData = await getResponse.json();
+                
+                results.innerHTML += `<h2>GET Leaderboard Results:</h2>`;
+                results.innerHTML += `<p>Status: ${getResponse.status}</p>`;
+                results.innerHTML += `<pre>${JSON.stringify(getData, null, 2)}</pre>`;
+                
+                // Test POST leaderboard
+                console.log('💾 Testing POST /api/quiz/leaderboard...');
+                const testEntry = {
+                    username: 'TestUser',
+                    score: 8,
+                    maxScore: 10,
+                    percentage: 80,
+                    totalTime: 120,
+                    quizDate: '2026-04-07'
+                };
+                
+                const postResponse = await fetch('https://fightsdb.vercel.app/api/quiz/leaderboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testEntry)
+                });
+                
+                const postData = await postResponse.json();
+                
+                results.innerHTML += `<h2>POST Leaderboard Results:</h2>`;
+                results.innerHTML += `<p>Status: ${postResponse.status}</p>`;
+                results.innerHTML += `<pre>${JSON.stringify(postData, null, 2)}</pre>`;
+                
+            } catch (error) {
+                results.innerHTML += `<h2>Error:</h2><pre>${error.message}</pre>`;
+                console.error('Test failed:', error);
+            }
+        }
+        
+        // Run test when page loads
+        testAPI();
+    </script>
+</body>
+</html>

@@ -76,12 +76,15 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
       quizDate: today
     }
     
+    console.log('💾 Saving score to leaderboard:', entry)
+    
     try {
-      await QuizLeaderboardAPI.saveScore(entry)
+      const success = await QuizLeaderboardAPI.saveScore(entry)
       QuizLeaderboardAPI.markCompleted(today)
+      console.log(success ? '✅ Score saved to database!' : '📱 Score saved locally (database fallback)')
       setShowUsernameEntry(false)
     } catch (error) {
-      console.error('Error saving to leaderboard:', error)
+      console.error('❌ Error saving to leaderboard:', error)
       setShowUsernameEntry(false)
     }
   }
