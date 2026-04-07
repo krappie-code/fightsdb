@@ -124,55 +124,154 @@ export class QuizQuestionGenerator {
     const seed = this.dateToSeed(date)
     const rng = this.seededRandom(seed)
     
+    // Shuffle fights to ensure uniqueness
+    const shuffledFights = this.shuffleArray([...MOCK_FIGHTS], rng)
+    const usedFights = new Set<string>()
     const questions: QuizQuestion[] = []
     
-    // Generate easy questions (7) - Mix recent and classic fights
-    for (let i = 0; i < 7; i++) {
-      const fight = MOCK_FIGHTS[Math.floor(rng() * MOCK_FIGHTS.length)]
+    // Question templates for variety
+    const questionTemplates = {
+      easy: [
+        (fight: any) => ({
+          type: 'winner' as const,
+          question: `Who won ${fight.fighter1.name} vs ${fight.fighter2.name} at ${fight.event.name}?`,
+          options: [fight.fighter1.name, fight.fighter2.name, 'Draw', 'No Contest'],
+          correct_answer: fight.fighter1.name,
+          explanation: `${fight.fighter1.name} won by ${fight.method} in round ${fight.round}.`
+        }),
+        (fight: any) => ({
+          type: 'method' as const,
+          question: `How did ${fight.fighter1.name} defeat ${fight.fighter2.name}?`,
+          options: ['Decision', 'KO/TKO', 'Submission', 'DQ'],
+          correct_answer: fight.method,
+          explanation: `${fight.fighter1.name} won by ${fight.method} in round ${fight.round}.`
+        })
+      ],
+      medium: [
+        (fight: any) => ({
+          type: 'event' as const,
+          question: `At which event did ${fight.fighter1.name} face ${fight.fighter2.name}?`,
+          options: this.generateEventOptions(fight.event.name, rng),
+          correct_answer: fight.event.name,
+          explanation: `This fight took place at ${fight.event.name} on ${fight.event.date}.`
+        }),
+        (fight: any) => ({
+          type: 'round' as const,
+          question: `In which round did ${fight.fighter1.name} vs ${fight.fighter2.name} end?`,
+          options: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5'],
+          correct_answer: `Round ${fight.round}`,
+          explanation: `The fight ended in round ${fight.round} at ${fight.time}.`
+        })
+      ],
+      hard: [
+        (fight: any) => ({
+          type: 'year' as const,
+          question: `In what year did ${fight.fighter1.name} vs ${fight.fighter2.name} take place?`,
+          options: this.generateYearOptions(fight.event.date, rng),
+          correct_answer: new Date(fight.event.date).getFullYear().toString(),
+          explanation: `This fight happened on ${fight.event.date} at ${fight.event.name}.`
+        }),
+        (fight: any) => ({
+          type: 'event' as const,
+          question: `At which city did ${fight.fighter1.name} vs ${fight.fighter2.name} take place?`,
+          options: this.generateLocationOptions(fight.event.location, rng),
+          correct_answer: fight.event.location.split(',')[0], // Get city part
+          explanation: `This fight took place in ${fight.event.location}.`
+        })
+      ]
+    }
+    
+    // Generate easy questions (7) - ensure unique fights
+    for (let i = 0; i < 7 && shuffledFights.length > usedFights.size; i++) {
+      const fight = this.getUnusedFight(shuffledFights, usedFights)
+      if (!fight) break
+      
+      const template = questionTemplates.easy[Math.floor(rng() * questionTemplates.easy.length)]
+      const questionData = template(fight)
+      
       questions.push({
         id: `easy-${i}`,
         fight_id: fight.id,
-        type: 'winner',
         difficulty: 'easy',
-        question: `Who won ${fight.fighter1.name} vs ${fight.fighter2.name} at ${fight.event.name}?`,
-        options: [fight.fighter1.name, fight.fighter2.name, 'Draw', 'No Contest'],
-        correct_answer: fight.fighter1.name,
-        explanation: `${fight.fighter1.name} won by ${fight.method} in round ${fight.round}.`,
-        points: 10
+        points: 10,
+        ...questionData
       })
+      
+      usedFights.add(fight.id)
     }
     
-    // Generate medium questions (2) - Include recent events
-    for (let i = 0; i < 2; i++) {
-      const fight = MOCK_FIGHTS[Math.floor(rng() * MOCK_FIGHTS.length)]
+    // Generate medium questions (2) - ensure unique fights
+    for (let i = 0; i < 2 && shuffledFights.length > usedFights.size; i++) {
+      const fight = this.getUnusedFight(shuffledFights, usedFights)
+      if (!fight) break
+      
+      const template = questionTemplates.medium[Math.floor(rng() * questionTemplates.medium.length)]
+      const questionData = template(fight)
+      
       questions.push({
         id: `medium-${i}`,
         fight_id: fight.id,
-        type: 'method',
         difficulty: 'medium',
-        question: `How did ${fight.fighter1.name} win against ${fight.fighter2.name}?`,
-        options: ['Decision', 'KO/TKO', 'Submission', 'DQ'],
-        correct_answer: fight.method,
-        explanation: `${fight.fighter1.name} won by ${fight.method}.`,
-        points: 20
+        points: 20,
+        ...questionData
       })
+      
+      usedFights.add(fight.id)
     }
     
-    // Generate hard question (1) - Recent event knowledge
-    const recentFight = MOCK_FIGHTS[0] // Adesanya vs Pyfer
-    questions.push({
-      id: 'hard-1',
-      fight_id: recentFight.id,
-      type: 'event',
-      difficulty: 'hard',
-      question: `At which city did Adesanya vs Pyfer take place in March 2026?`,
-      options: ['Las Vegas', 'Seattle', 'New York', 'Miami'],
-      correct_answer: 'Seattle',
-      explanation: `UFC Fight Night: Adesanya vs. Pyfer took place in Seattle on March 28, 2026.`,
-      points: 30
-    })
+    // Generate hard question (1) - ensure unique fight
+    if (shuffledFights.length > usedFights.size) {
+      const fight = this.getUnusedFight(shuffledFights, usedFights)
+      if (fight) {
+        const template = questionTemplates.hard[Math.floor(rng() * questionTemplates.hard.length)]
+        const questionData = template(fight)
+        
+        questions.push({
+          id: 'hard-1',
+          fight_id: fight.id,
+          difficulty: 'hard',
+          points: 30,
+          ...questionData
+        })
+      }
+    }
     
     return this.shuffleArray(questions, rng)
+  }
+  
+  private getUnusedFight(fights: any[], usedIds: Set<string>): any | null {
+    return fights.find(fight => !usedIds.has(fight.id)) || null
+  }
+  
+  private generateEventOptions(correctEvent: string, rng: () => number): string[] {
+    const fakeEvents = [
+      'UFC 284', 'UFC Fight Night 200', 'UFC 286', 'The Ultimate Fighter Finale',
+      'UFC 287', 'UFC Fight Night 201', 'UFC 288', 'UFC Fight Night 202'
+    ].filter(e => e !== correctEvent)
+    
+    const shuffled = this.shuffleArray(fakeEvents, rng)
+    return this.shuffleArray([correctEvent, ...shuffled.slice(0, 3)], rng)
+  }
+  
+  private generateYearOptions(correctDate: string, rng: () => number): string[] {
+    const year = new Date(correctDate).getFullYear()
+    const fakeYears = [year - 1, year + 1, year - 2, year + 2]
+      .map(y => y.toString())
+      .filter(y => y !== year.toString())
+    
+    const shuffled = this.shuffleArray(fakeYears, rng)
+    return this.shuffleArray([year.toString(), ...shuffled.slice(0, 3)], rng)
+  }
+  
+  private generateLocationOptions(correctLocation: string, rng: () => number): string[] {
+    const city = correctLocation.split(',')[0]
+    const fakeCities = [
+      'Las Vegas', 'New York', 'Miami', 'Los Angeles', 'Chicago', 'Boston',
+      'London', 'Paris', 'Tokyo', 'Sydney', 'Toronto', 'Dublin'
+    ].filter(c => c !== city)
+    
+    const shuffled = this.shuffleArray(fakeCities, rng)
+    return this.shuffleArray([city, ...shuffled.slice(0, 3)], rng)
   }
   
   private dateToSeed(date: string): number {
