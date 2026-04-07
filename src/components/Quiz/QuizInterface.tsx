@@ -3,15 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { QuizQuestion, QuizAnswer, QuizAttempt, QuizResult } from '@/types/quiz'
 import { questionGenerator } from '@/lib/quiz/questionGenerator'
-
-interface LeaderboardEntry {
-  username: string
-  score: number
-  maxScore: number
-  percentage: number
-  totalTime: number
-  completedAt: string
-}
+import { QuizLeaderboardAPI, LeaderboardEntry } from '@/lib/quiz/leaderboard'
 
 interface QuizInterfaceProps {
   quizTitle?: string
@@ -37,33 +29,31 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   const [hasCompletedToday, setHasCompletedToday] = useState(false)
   const [showUsernameEntry, setShowUsernameEntry] = useState(false)
   const [username, setUsername] = useState('')
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [loadingLeaderboard, setLoadingLeaderboard] = useState(false)
 
-  // Check if user has completed today's quiz
+  // Check if user has completed today's quiz and load questions
   useEffect(() => {
-    const checkCompletedToday = () => {
-      const today = new Date().toISOString().split('T')[0]
-      const completedQuizzes = JSON.parse(localStorage.getItem('completed_quizzes') || '[]')
-      return completedQuizzes.includes(today)
-    }
-
-    if (checkCompletedToday()) {
-      setHasCompletedToday(true)
-      setIsLoading(false)
-      return
-    }
-
-    const loadQuiz = async () => {
+    const initializeQuiz = async () => {
       try {
+        // Check if quiz already completed today
+        if (QuizLeaderboardAPI.hasCompletedToday()) {
+          setHasCompletedToday(true)
+          setIsLoading(false)
+          return
+        }
+
+        // Load today's quiz questions
         const todaysQuestions = questionGenerator.getTodaysQuiz()
         setQuestions(todaysQuestions)
         setIsLoading(false)
       } catch (error) {
-        console.error('Failed to load quiz:', error)
+        console.error('Failed to initialize quiz:', error)
         setIsLoading(false)
       }
     }
     
-    loadQuiz()
+    initializeQuiz()
   }, [])
 
   const startQuiz = () => {
@@ -72,12 +62,10 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     startQuestionCountdown()
   }
 
-  const saveToLeaderboard = (finalUsername: string) => {
+  const saveToLeaderboard = async (finalUsername: string) => {
     if (!result) return
     
     const today = new Date().toISOString().split('T')[0]
-    const leaderboardKey = `leaderboard_${today}`
-    const leaderboard = JSON.parse(localStorage.getItem(leaderboardKey) || '[]')
     
     const entry = {
       username: finalUsername || 'Anonymous',
@@ -85,28 +73,26 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
       maxScore: result.attempt.max_score,
       percentage: result.attempt.percentage,
       totalTime: result.attempt.time_taken,
-      completedAt: result.attempt.completed_at
+      quizDate: today
     }
     
-    leaderboard.push(entry)
-    
-    // Sort by score (desc), then by time (asc) for tie-breaking
-    leaderboard.sort((a: LeaderboardEntry, b: LeaderboardEntry) => {
-      if (b.score !== a.score) return b.score - a.score
-      return a.totalTime - b.totalTime
-    })
-    
-    // Keep only top 100 entries
-    const trimmedLeaderboard = leaderboard.slice(0, 100)
-    localStorage.setItem(leaderboardKey, JSON.stringify(trimmedLeaderboard))
-    
-    setShowUsernameEntry(false)
+    try {
+      await QuizLeaderboardAPI.saveScore(entry)
+      QuizLeaderboardAPI.markCompleted(today)
+      setShowUsernameEntry(false)
+    } catch (error) {
+      console.error('Error saving to leaderboard:', error)
+      setShowUsernameEntry(false)
+    }
   }
 
-  const getLeaderboard = () => {
-    const today = new Date().toISOString().split('T')[0]
-    const leaderboardKey = `leaderboard_${today}`
-    return JSON.parse(localStorage.getItem(leaderboardKey) || '[]')
+  const getLeaderboard = async (): Promise<LeaderboardEntry[]> => {
+    try {
+      return await QuizLeaderboardAPI.getLeaderboard()
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error)
+      return []
+    }
   }
 
   // Question countdown timer (3-2-1)
@@ -147,6 +133,8 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   }
 
   const handleTimeout = () => {
+    if (!currentQuestion) return
+    
     setTimeoutOccurred(true)
     setIsQuestionActive(false)
     
@@ -165,11 +153,11 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     setShowFeedback(true)
   }
 
-  const currentQuestion = questions[currentQuestionIndex]
+  const currentQuestion = questions[currentQuestionIndex] || null
   const isLastQuestion = currentQuestionIndex === questions.length - 1
 
   const handleAnswerSelect = (answer: string) => {
-    if (!isQuestionActive || showFeedback) return
+    if (!isQuestionActive || showFeedback || !currentQuestion) return
     
     setSelectedAnswer(answer)
     setIsQuestionActive(false) // Stop timer when answer is selected
@@ -253,16 +241,6 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     setResult(quizResult)
     setIsComplete(true)
     setShowUsernameEntry(true)
-    
-    // Track completion in localStorage
-    if (typeof window !== 'undefined') {
-      const today = new Date().toISOString().split('T')[0]
-      const completedQuizzes = JSON.parse(localStorage.getItem('completed_quizzes') || '[]')
-      if (!completedQuizzes.includes(today)) {
-        completedQuizzes.push(today)
-        localStorage.setItem('completed_quizzes', JSON.stringify(completedQuizzes))
-      }
-    }
   }
 
   const shareResult = () => {
@@ -368,40 +346,22 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
 
   // Already completed today's quiz
   if (hasCompletedToday) {
-    const leaderboard = getLeaderboard()
     return (
-      <div className="max-w-2xl mx-auto p-6">
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4">✅</div>
-          <h1 className="text-3xl font-bold text-white mb-4">Quiz Already Completed</h1>
-          <p className="text-gray-300 text-lg">
-            You've already taken today's UFC quiz! Come back tomorrow for new questions.
-          </p>
-          <div className="mt-4 text-sm text-gray-400">
-            New quiz available at UTC midnight ({new Date(new Date().setUTCHours(24,0,0,0)).toLocaleString()})
-          </div>
-        </div>
-
-        {leaderboard.length > 0 && (
-          <div className="bg-slate-800 border border-gray-700 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-4 text-center">📊 Today's Leaderboard</h2>
-            <div className="space-y-2">
-              {leaderboard.slice(0, 10).map((entry: LeaderboardEntry, index: number) => (
-                <div key={index} className="flex justify-between items-center py-2 px-3 bg-slate-700/50 rounded">
-                  <div className="flex items-center">
-                    <span className="text-gray-400 w-6">#{index + 1}</span>
-                    <span className="text-white font-medium ml-2">{entry.username}</span>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
-                    <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      <AlreadyCompletedScreen 
+        leaderboard={leaderboard}
+        loadingLeaderboard={loadingLeaderboard}
+        onLoadLeaderboard={async () => {
+          setLoadingLeaderboard(true)
+          try {
+            const data = await getLeaderboard()
+            setLeaderboard(data)
+          } catch (error) {
+            console.error('Error loading leaderboard:', error)
+          } finally {
+            setLoadingLeaderboard(false)
+          }
+        }}
+      />
     )
   }
 
@@ -439,8 +399,30 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
         result={result} 
         questions={questions}
         onShare={shareResult}
-        leaderboard={getLeaderboard()}
+        leaderboard={leaderboard}
+        loadingLeaderboard={loadingLeaderboard}
+        onLoadLeaderboard={async () => {
+          setLoadingLeaderboard(true)
+          try {
+            const data = await getLeaderboard()
+            setLeaderboard(data)
+          } catch (error) {
+            console.error('Error loading leaderboard:', error)
+          } finally {
+            setLoadingLeaderboard(false)
+          }
+        }}
       />
+    )
+  }
+
+  // Safety check - if no questions or current question is missing
+  if (!questions.length || !currentQuestion) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
+        <p className="text-gray-300">Loading quiz questions...</p>
+      </div>
     )
   }
 
@@ -597,6 +579,66 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   )
 }
 
+interface AlreadyCompletedScreenProps {
+  leaderboard: LeaderboardEntry[]
+  loadingLeaderboard: boolean
+  onLoadLeaderboard: () => void
+}
+
+function AlreadyCompletedScreen({ leaderboard, loadingLeaderboard, onLoadLeaderboard }: AlreadyCompletedScreenProps) {
+  // Load leaderboard on mount
+  React.useEffect(() => {
+    if (leaderboard.length === 0 && !loadingLeaderboard) {
+      onLoadLeaderboard()
+    }
+  }, [leaderboard.length, loadingLeaderboard, onLoadLeaderboard])
+
+  return (
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="text-center mb-8">
+        <div className="text-6xl mb-4">✅</div>
+        <h1 className="text-3xl font-bold text-white mb-4">Quiz Already Completed</h1>
+        <p className="text-gray-300 text-lg">
+          You've already taken today's UFC quiz! Come back tomorrow for new questions.
+        </p>
+        <div className="mt-4 text-sm text-gray-400">
+          New quiz available at UTC midnight ({new Date(new Date().setUTCHours(24,0,0,0)).toLocaleString()})
+        </div>
+      </div>
+
+      <div className="bg-slate-800 border border-gray-700 rounded-lg p-6">
+        <h2 className="text-xl font-bold text-white mb-4 text-center">📊 Today's Leaderboard</h2>
+        
+        {loadingLeaderboard ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading leaderboard...</p>
+          </div>
+        ) : leaderboard.length > 0 ? (
+          <div className="space-y-2">
+            {leaderboard.slice(0, 10).map((entry: LeaderboardEntry, index: number) => (
+              <div key={entry.id || index} className="flex justify-between items-center py-2 px-3 bg-slate-700/50 rounded">
+                <div className="flex items-center">
+                  <span className="text-gray-400 w-6">#{index + 1}</span>
+                  <span className="text-white font-medium ml-2">{entry.username}</span>
+                </div>
+                <div className="flex items-center gap-4 text-sm">
+                  <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
+                  <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-400">
+            No scores yet today. Be the first to take the quiz!
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 interface UsernameEntryScreenProps {
   result: QuizResult
   username: string
@@ -681,9 +723,17 @@ interface QuizResultsScreenProps {
   questions: QuizQuestion[]
   onShare: () => void
   leaderboard: LeaderboardEntry[]
+  loadingLeaderboard: boolean
+  onLoadLeaderboard: () => void
 }
 
-function QuizResultsScreen({ result, questions, onShare, leaderboard }: QuizResultsScreenProps) {
+function QuizResultsScreen({ result, questions, onShare, leaderboard, loadingLeaderboard, onLoadLeaderboard }: QuizResultsScreenProps) {
+  // Load leaderboard on mount
+  React.useEffect(() => {
+    if (leaderboard.length === 0 && !loadingLeaderboard) {
+      onLoadLeaderboard()
+    }
+  }, [leaderboard.length, loadingLeaderboard, onLoadLeaderboard])
   const { attempt, breakdown, performance_rating } = result
 
   const performanceColor = 
@@ -760,30 +810,42 @@ function QuizResultsScreen({ result, questions, onShare, leaderboard }: QuizResu
           </div>
         </div>
 
-        {leaderboard.length > 0 && (
-          <div className="bg-slate-700/50 border border-gray-600 rounded-lg p-4">
-            <h3 className="text-lg font-bold text-white mb-3 text-center">📊 Today's Top Scores</h3>
-            <div className="space-y-2">
-              {leaderboard.slice(0, 5).map((entry: LeaderboardEntry, index: number) => (
-                <div key={index} className="flex justify-between items-center py-2 px-3 bg-slate-600/50 rounded">
-                  <div className="flex items-center">
-                    <span className="text-gray-400 w-6">#{index + 1}</span>
-                    <span className="text-white font-medium ml-2">{entry.username}</span>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
-                    <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
-                  </div>
-                </div>
-              ))}
+        <div className="bg-slate-700/50 border border-gray-600 rounded-lg p-4">
+          <h3 className="text-lg font-bold text-white mb-3 text-center">📊 Today's Top Scores</h3>
+          
+          {loadingLeaderboard ? (
+            <div className="text-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto mb-2"></div>
+              <p className="text-gray-400 text-sm">Loading leaderboard...</p>
             </div>
-            {leaderboard.length > 5 && (
-              <div className="text-center text-xs text-gray-500 mt-2">
-                ...and {leaderboard.length - 5} more entries
+          ) : leaderboard.length > 0 ? (
+            <>
+              <div className="space-y-2">
+                {leaderboard.slice(0, 5).map((entry: LeaderboardEntry, index: number) => (
+                  <div key={entry.id || index} className="flex justify-between items-center py-2 px-3 bg-slate-600/50 rounded">
+                    <div className="flex items-center">
+                      <span className="text-gray-400 w-6">#{index + 1}</span>
+                      <span className="text-white font-medium ml-2">{entry.username}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
+                      <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-        )}
+              {leaderboard.length > 5 && (
+                <div className="text-center text-xs text-gray-500 mt-2">
+                  ...and {leaderboard.length - 5} more entries
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-4 text-gray-400 text-sm">
+              No scores yet today. You're the first!
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
