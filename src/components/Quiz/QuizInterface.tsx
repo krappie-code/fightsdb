@@ -24,6 +24,7 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   const [questionTimer, setQuestionTimer] = useState<number>(5)
   const [isQuestionActive, setIsQuestionActive] = useState(false)
   const [timeoutOccurred, setTimeoutOccurred] = useState(false)
+  const [showIntro, setShowIntro] = useState(true)
 
   // Load today's quiz on mount
   useEffect(() => {
@@ -31,10 +32,7 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
       try {
         const todaysQuestions = questionGenerator.getTodaysQuiz()
         setQuestions(todaysQuestions)
-        setStartTime(Date.now())
         setIsLoading(false)
-        // Start first question countdown
-        startQuestionCountdown()
       } catch (error) {
         console.error('Failed to load quiz:', error)
         setIsLoading(false)
@@ -43,6 +41,12 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     
     loadQuiz()
   }, [])
+
+  const startQuiz = () => {
+    setShowIntro(false)
+    setStartTime(Date.now())
+    startQuestionCountdown()
+  }
 
   // Question countdown timer (3-2-1)
   useEffect(() => {
@@ -105,42 +109,38 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
 
   const handleAnswerSelect = (answer: string) => {
     if (!isQuestionActive || showFeedback) return
+    
     setSelectedAnswer(answer)
     setIsQuestionActive(false) // Stop timer when answer is selected
+    
+    // Immediately submit the answer
+    const timeTaken = Math.round((Date.now() - questionStartTime) / 1000)
+    const answerObj: QuizAnswer = {
+      question_id: currentQuestion.id,
+      selected_answer: answer,
+      is_correct: answer === currentQuestion.correct_answer,
+      time_taken: timeTaken
+    }
+
+    const newAnswers = [...answers, answerObj]
+    setAnswers(newAnswers)
+
+    // Show feedback
+    setIsCorrect(answerObj.is_correct)
+    setShowFeedback(true)
   }
 
   const handleNextQuestion = () => {
-    if (!showFeedback && !selectedAnswer && !timeoutOccurred) return
+    if (!showFeedback) return
 
-    if (!showFeedback) {
-      // First click - submit answer and show feedback
-      const timeTaken = Math.round((Date.now() - questionStartTime) / 1000)
-      const answer: QuizAnswer = {
-        question_id: currentQuestion.id,
-        selected_answer: selectedAnswer,
-        is_correct: selectedAnswer === currentQuestion.correct_answer,
-        time_taken: timeTaken
-      }
-
-      const newAnswers = [...answers, answer]
-      setAnswers(newAnswers)
-
-      // Show feedback
-      setIsCorrect(answer.is_correct)
-      setShowFeedback(true)
+    // Advance to next question or complete
+    if (isLastQuestion) {
+      // Quiz complete!
+      completeQuiz(answers)
     } else {
-      // Second click - advance to next question or complete
-      if (isLastQuestion) {
-        // Quiz complete!
-        const finalAnswers = timeoutOccurred && answers.length === questions.length - 1 
-          ? answers 
-          : [...answers]
-        completeQuiz(finalAnswers)
-      } else {
-        // Next question - start countdown
-        setCurrentQuestionIndex(prev => prev + 1)
-        startQuestionCountdown()
-      }
+      // Next question - start countdown
+      setCurrentQuestionIndex(prev => prev + 1)
+      startQuestionCountdown()
     }
   }
 
@@ -233,6 +233,76 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
       <div className="max-w-2xl mx-auto p-6 text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
         <p className="text-gray-300">Loading today's UFC quiz...</p>
+      </div>
+    )
+  }
+
+  // Intro/Briefing screen
+  if (showIntro) {
+    return (
+      <div className="max-w-2xl mx-auto p-6">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-4">{quizTitle}</h1>
+          <div className="text-lg text-gray-300 mb-8">
+            {new Date().toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </div>
+        </div>
+
+        <div className="bg-slate-800 border border-gray-700 rounded-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-6 text-center">How It Works</h2>
+          
+          <div className="space-y-4 text-gray-300">
+            <div className="flex items-start">
+              <span className="text-red-500 mr-3 text-lg">⏱️</span>
+              <div>
+                <strong className="text-white">5 seconds per question</strong>
+                <p className="text-sm text-gray-400">You have exactly 5 seconds to choose an answer. Choose quickly!</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start">
+              <span className="text-blue-500 mr-3 text-lg">🎯</span>
+              <div>
+                <strong className="text-white">{questions.length} questions total</strong>
+                <p className="text-sm text-gray-400">Mix of easy, medium, and hard UFC trivia questions.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start">
+              <span className="text-green-500 mr-3 text-lg">🏆</span>
+              <div>
+                <strong className="text-white">Points and timing matter</strong>
+                <p className="text-sm text-gray-400">Score points for correct answers. Total time is used for tie-breaking.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start">
+              <span className="text-yellow-500 mr-3 text-lg">⚡</span>
+              <div>
+                <strong className="text-white">Click to answer</strong>
+                <p className="text-sm text-gray-400">Clicking an option immediately submits it - no take-backs!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={startQuiz}
+            className="bg-red-600 hover:bg-red-700 text-white font-bold text-lg px-12 py-4 rounded-lg transition-colors"
+          >
+            Start Quiz 🚀
+          </button>
+        </div>
+        
+        <p className="text-center text-gray-400 text-sm mt-4">
+          Ready to test your UFC knowledge? Good luck! 🥊
+        </p>
       </div>
     )
   }
@@ -344,7 +414,7 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
             return (
               <button
                 key={`${currentQuestion.id}-${index}`}
-                onClick={() => !showFeedback && !timeoutOccurred && isQuestionActive && handleAnswerSelect(option)}
+                onClick={() => handleAnswerSelect(option)}
                 disabled={showFeedback || timeoutOccurred || !isQuestionActive}
                 className={buttonClass}
               >
@@ -404,20 +474,14 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
           )}
         </div>
         
-        <button
-          onClick={handleNextQuestion}
-          disabled={(!selectedAnswer && !timeoutOccurred && !showFeedback) || questionCountdown !== null}
-          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-            (selectedAnswer || timeoutOccurred || showFeedback) && questionCountdown === null
-              ? 'bg-red-600 text-white hover:bg-red-700'
-              : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          {showFeedback 
-            ? (isLastQuestion ? 'Complete Quiz' : 'Next Question →') 
-            : (isLastQuestion ? 'Submit Final Answer' : 'Submit Answer')
-          }
-        </button>
+        {showFeedback && (
+          <button
+            onClick={handleNextQuestion}
+            className="bg-red-600 text-white hover:bg-red-700 px-6 py-2 rounded-lg font-medium transition-colors"
+          >
+            {isLastQuestion ? 'Complete Quiz' : 'Next Question →'}
+          </button>
+        )}
       </div>
     </div>
   )
