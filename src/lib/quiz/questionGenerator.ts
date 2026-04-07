@@ -102,6 +102,19 @@ const MOCK_FIGHTS = [
     time: '5:00',
     weight_class: 'Featherweight',
     title_fight: false
+  },
+  // April 5, 2026 event
+  {
+    id: '9',
+    event: { name: 'UFC Fight Night: Moicano vs. Duncan', date: '2026-04-05', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Renato Moicano', nickname: 'Money' },
+    fighter2: { name: 'Duncan', nickname: '' },
+    result: 'Win',
+    method: 'Submission',
+    round: 2,
+    time: '3:15',
+    weight_class: 'Lightweight',
+    title_fight: false
   }
 ]
 
