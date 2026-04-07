@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: '/fights', label: 'Fights' },
   { href: '/fighters', label: 'Fighters' },
   { href: '/championships', label: 'Titles' },
+  { href: '/quiz/daily', label: 'Daily Quiz' },
 ]
 
 export function Navbar() {

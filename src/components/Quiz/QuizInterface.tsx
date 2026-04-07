@@ -178,18 +178,18 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     <div className="max-w-2xl mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{quizTitle}</h1>
+        <h1 className="text-3xl font-bold text-white mb-2">{quizTitle}</h1>
         <div className="flex justify-between items-center">
-          <p className="text-gray-600">
+          <p className="text-gray-300">
             Question {currentQuestionIndex + 1} of {questions.length}
           </p>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-400">
             {new Date().toLocaleDateString()}
           </div>
         </div>
         
         {/* Progress bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+        <div className="w-full bg-gray-700 rounded-full h-2 mt-4">
           <div 
             className="bg-red-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
@@ -198,20 +198,20 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
       </div>
 
       {/* Question */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <div className="flex justify-between items-start mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 flex-1">
+      <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 mb-6">
+        <div className="flex justify-between items-start mb-6">
+          <h2 className="text-xl font-semibold text-white flex-1">
             {currentQuestion?.question}
           </h2>
           <div className="flex gap-2 ml-4">
             <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-              currentQuestion?.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-              currentQuestion?.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
+              currentQuestion?.difficulty === 'easy' ? 'bg-green-900 text-green-300' :
+              currentQuestion?.difficulty === 'medium' ? 'bg-yellow-900 text-yellow-300' :
+              'bg-red-900 text-red-300'
             }`}>
               {currentQuestion?.difficulty}
             </span>
-            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+            <span className="text-xs px-2 py-1 bg-blue-900 text-blue-300 rounded-full font-medium">
               {currentQuestion?.points} pts
             </span>
           </div>
@@ -221,16 +221,16 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
         <div className="space-y-3">
           {currentQuestion?.options.map((option, index) => (
             <button
-              key={index}
+              key={`${currentQuestion.id}-${index}`}
               onClick={() => handleAnswerSelect(option)}
               className={`w-full text-left p-4 border rounded-lg transition-all ${
                 selectedAnswer === option
-                  ? 'border-red-500 bg-red-50 text-red-900'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  ? 'border-red-500 bg-red-900/30 text-red-200'
+                  : 'border-gray-600 hover:border-gray-500 hover:bg-slate-700 text-gray-200'
               }`}
             >
               <div className="flex items-center">
-                <span className="text-sm font-medium mr-3">
+                <span className="text-sm font-medium mr-3 text-gray-400">
                   {String.fromCharCode(65 + index)}.
                 </span>
                 <span>{option}</span>
@@ -242,7 +242,7 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-400">
           {answers.length > 0 && (
             <span>
               Score: {answers.filter(a => a.is_correct).length}/{answers.length}
@@ -256,7 +256,7 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
           className={`px-6 py-2 rounded-lg font-medium transition-colors ${
             selectedAnswer
               ? 'bg-red-600 text-white hover:bg-red-700'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-gray-600 text-gray-400 cursor-not-allowed'
           }`}
         >
           {isLastQuestion ? 'Complete Quiz' : 'Next Question'}
@@ -277,9 +277,9 @@ function QuizResultsScreen({ result, questions, onShare, onRetake }: QuizResults
   const { attempt, breakdown, performance_rating } = result
 
   const performanceColor = 
-    performance_rating === 'Encyclopedia' ? 'text-purple-600' :
-    performance_rating === 'Expert' ? 'text-green-600' :
-    performance_rating === 'Fan' ? 'text-blue-600' : 'text-gray-600'
+    performance_rating === 'Encyclopedia' ? 'text-purple-400' :
+    performance_rating === 'Expert' ? 'text-green-400' :
+    performance_rating === 'Fan' ? 'text-blue-400' : 'text-gray-400'
 
   const performanceEmoji = 
     performance_rating === 'Encyclopedia' ? '🏆' :
@@ -291,39 +291,39 @@ function QuizResultsScreen({ result, questions, onShare, onRetake }: QuizResults
       {/* Header */}
       <div className="text-center mb-8">
         <div className="text-6xl mb-4">{performanceEmoji}</div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Quiz Complete!</h1>
+        <h1 className="text-3xl font-bold text-white mb-2">Quiz Complete!</h1>
         <div className={`text-xl font-semibold ${performanceColor}`}>
           {performance_rating}
         </div>
       </div>
 
       {/* Score Card */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+      <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 mb-6">
         <div className="text-center mb-6">
-          <div className="text-5xl font-bold text-red-600 mb-2">
+          <div className="text-5xl font-bold text-red-500 mb-2">
             {attempt.score}/{attempt.max_score}
           </div>
-          <div className="text-xl text-gray-600">
+          <div className="text-xl text-gray-300">
             {attempt.percentage}% Correct
           </div>
-          <div className="text-sm text-gray-500 mt-2">
+          <div className="text-sm text-gray-400 mt-2">
             Completed in {Math.floor(attempt.time_taken / 60)}:{(attempt.time_taken % 60).toString().padStart(2, '0')}
           </div>
         </div>
 
         {/* Breakdown */}
-        <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-100">
+        <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-600">
           <div className="text-center">
-            <div className="text-sm text-green-600 font-medium">Easy</div>
-            <div className="text-lg font-bold">{breakdown.easy_correct}/7</div>
+            <div className="text-sm text-green-400 font-medium">Easy</div>
+            <div className="text-lg font-bold text-white">{breakdown.easy_correct}/7</div>
           </div>
           <div className="text-center">
-            <div className="text-sm text-yellow-600 font-medium">Medium</div>
-            <div className="text-lg font-bold">{breakdown.medium_correct}/2</div>
+            <div className="text-sm text-yellow-400 font-medium">Medium</div>
+            <div className="text-lg font-bold text-white">{breakdown.medium_correct}/2</div>
           </div>
           <div className="text-center">
-            <div className="text-sm text-red-600 font-medium">Hard</div>
-            <div className="text-lg font-bold">{breakdown.hard_correct}/1</div>
+            <div className="text-sm text-red-400 font-medium">Hard</div>
+            <div className="text-lg font-bold text-white">{breakdown.hard_correct}/1</div>
           </div>
         </div>
       </div>
@@ -339,12 +339,12 @@ function QuizResultsScreen({ result, questions, onShare, onRetake }: QuizResults
         
         <button
           onClick={onRetake}
-          className="w-full bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+          className="w-full bg-gray-700 text-gray-300 py-3 px-6 rounded-lg font-medium hover:bg-gray-600 transition-colors"
         >
           🔄 Take Tomorrow's Quiz
         </button>
         
-        <div className="text-center text-sm text-gray-500">
+        <div className="text-center text-sm text-gray-400">
           Come back tomorrow for a new quiz!
         </div>
       </div>
