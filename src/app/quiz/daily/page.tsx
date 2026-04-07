@@ -18,19 +18,6 @@ export const metadata: Metadata = {
 }
 
 export default function DailyQuizPage() {
-  const handleQuizComplete = (result: QuizResult) => {
-    // Could save to local storage or send to analytics
-    console.log('Quiz completed:', result)
-    
-    // Track completion in localStorage for streak tracking (future feature)
-    const today = new Date().toISOString().split('T')[0]
-    const completedQuizzes = JSON.parse(localStorage.getItem('completed_quizzes') || '[]')
-    if (!completedQuizzes.includes(today)) {
-      completedQuizzes.push(today)
-      localStorage.setItem('completed_quizzes', JSON.stringify(completedQuizzes))
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -57,10 +44,7 @@ export default function DailyQuizPage() {
 
       {/* Quiz Content */}
       <main className="py-8">
-        <QuizInterface 
-          quizTitle="Daily UFC Quiz"
-          onComplete={handleQuizComplete}
-        />
+        <QuizInterface quizTitle="Daily UFC Quiz" />
       </main>
 
       {/* Footer */}

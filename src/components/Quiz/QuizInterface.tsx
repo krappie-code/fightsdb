@@ -6,10 +6,9 @@ import { questionGenerator } from '@/lib/quiz/questionGenerator'
 
 interface QuizInterfaceProps {
   quizTitle?: string
-  onComplete?: (result: QuizResult) => void
 }
 
-export function QuizInterface({ quizTitle = "Daily UFC Quiz", onComplete }: QuizInterfaceProps) {
+export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfaceProps) {
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<QuizAnswer[]>([])
@@ -118,7 +117,19 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz", onComplete }: Quiz
 
     setResult(quizResult)
     setIsComplete(true)
-    onComplete?.(quizResult)
+    
+    // Handle completion internally
+    console.log('Quiz completed:', quizResult)
+    
+    // Track completion in localStorage for streak tracking (future feature)
+    if (typeof window !== 'undefined') {
+      const today = new Date().toISOString().split('T')[0]
+      const completedQuizzes = JSON.parse(localStorage.getItem('completed_quizzes') || '[]')
+      if (!completedQuizzes.includes(today)) {
+        completedQuizzes.push(today)
+        localStorage.setItem('completed_quizzes', JSON.stringify(completedQuizzes))
+      }
+    }
   }
 
   const shareResult = () => {
