@@ -8,8 +8,13 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 // GET /api/quiz/leaderboard?date=YYYY-MM-DD
 export async function GET(request: NextRequest) {
   try {
+    console.log('🔍 Leaderboard API called')
+    console.log('🔗 Supabase URL:', supabaseUrl)
+    console.log('🔑 Has API Key:', !!supabaseKey)
+    
     const searchParams = request.nextUrl.searchParams
     const date = searchParams.get('date') || new Date().toISOString().split('T')[0]
+    console.log('📅 Fetching leaderboard for date:', date)
     
     const { data, error } = await supabase
       .from('quiz_leaderboard')
