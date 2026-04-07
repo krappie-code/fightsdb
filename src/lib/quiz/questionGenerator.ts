@@ -135,7 +135,7 @@ export class QuizQuestionGenerator {
         (fight: any) => ({
           type: 'winner' as const,
           question: `Who won ${fight.fighter1.name} vs ${fight.fighter2.name} at ${fight.event.name}?`,
-          options: [fight.fighter1.name, fight.fighter2.name, 'Draw', 'No Contest'],
+          options: this.shuffleArray([fight.fighter1.name, fight.fighter2.name], this.seededRandom(fight.id.charCodeAt(0))),
           correct_answer: fight.fighter1.name,
           explanation: `${fight.fighter1.name} won by ${fight.method} in round ${fight.round}.`
         }),

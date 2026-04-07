@@ -18,6 +18,8 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now())
   const [isComplete, setIsComplete] = useState(false)
   const [result, setResult] = useState<QuizResult | null>(null)
+  const [showFeedback, setShowFeedback] = useState(false)
+  const [isCorrect, setIsCorrect] = useState<boolean>(false)
 
   // Load today's quiz on mount
   useEffect(() => {
@@ -59,15 +61,26 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     const newAnswers = [...answers, answer]
     setAnswers(newAnswers)
 
-    if (isLastQuestion) {
-      // Quiz complete!
-      completeQuiz(newAnswers)
-    } else {
-      // Next question
-      setCurrentQuestionIndex(prev => prev + 1)
-      setSelectedAnswer('')
-      setQuestionStartTime(Date.now())
-    }
+    // Show feedback
+    setIsCorrect(answer.is_correct)
+    setShowFeedback(true)
+
+    // Wait 1.5 seconds to show feedback, then advance
+    setTimeout(() => {
+      setShowFeedback(false)
+      
+      if (isLastQuestion) {
+        // Quiz complete!
+        completeQuiz(newAnswers)
+      } else {
+        // Next question
+        setCurrentQuestionIndex(prev => prev + 1)
+        setSelectedAnswer('')
+        setQuestionStartTime(Date.now())
+        setShowFeedback(false)
+        setIsCorrect(false)
+      }
+    }, 1500)
   }
 
   const completeQuiz = (finalAnswers: QuizAnswer[]) => {
@@ -219,25 +232,73 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
         
         {/* Answer Options */}
         <div className="space-y-3">
-          {currentQuestion?.options.map((option, index) => (
-            <button
-              key={`${currentQuestion.id}-${index}`}
-              onClick={() => handleAnswerSelect(option)}
-              className={`w-full text-left p-4 border rounded-lg transition-all ${
-                selectedAnswer === option
-                  ? 'border-red-500 bg-red-900/30 text-red-200'
-                  : 'border-gray-600 hover:border-gray-500 hover:bg-slate-700 text-gray-200'
-              }`}
-            >
-              <div className="flex items-center">
-                <span className="text-sm font-medium mr-3 text-gray-400">
-                  {String.fromCharCode(65 + index)}.
-                </span>
-                <span>{option}</span>
-              </div>
-            </button>
-          ))}
+          {currentQuestion?.options.map((option, index) => {
+            let buttonClass = 'w-full text-left p-4 border rounded-lg transition-all '
+            
+            if (showFeedback) {
+              // Show feedback colors
+              if (option === currentQuestion.correct_answer) {
+                buttonClass += 'border-green-500 bg-green-900/30 text-green-200'
+              } else if (selectedAnswer === option && !isCorrect) {
+                buttonClass += 'border-red-500 bg-red-900/30 text-red-200'
+              } else {
+                buttonClass += 'border-gray-600 bg-slate-700/50 text-gray-400'
+              }
+            } else {
+              // Normal state
+              if (selectedAnswer === option) {
+                buttonClass += 'border-blue-500 bg-blue-900/30 text-blue-200'
+              } else {
+                buttonClass += 'border-gray-600 hover:border-gray-500 hover:bg-slate-700 text-gray-200'
+              }
+            }
+
+            return (
+              <button
+                key={`${currentQuestion.id}-${index}`}
+                onClick={() => !showFeedback && handleAnswerSelect(option)}
+                disabled={showFeedback}
+                className={buttonClass}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium mr-3 text-gray-400">
+                      {String.fromCharCode(65 + index)}.
+                    </span>
+                    <span>{option}</span>
+                  </div>
+                  {showFeedback && (
+                    <div className="flex items-center">
+                      {option === currentQuestion.correct_answer && (
+                        <span className="text-green-400 text-lg">✓</span>
+                      )}
+                      {selectedAnswer === option && !isCorrect && option !== currentQuestion.correct_answer && (
+                        <span className="text-red-400 text-lg">✗</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </button>
+            )
+          })}
         </div>
+        
+        {/* Feedback Message */}
+        {showFeedback && (
+          <div className={`mt-4 p-4 rounded-lg ${isCorrect ? 'bg-green-900/30 border border-green-700' : 'bg-red-900/30 border border-red-700'}`}>
+            <div className="flex items-center mb-2">
+              <span className={`text-lg mr-2 ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+                {isCorrect ? '✓' : '✗'}
+              </span>
+              <span className={`font-semibold ${isCorrect ? 'text-green-300' : 'text-red-300'}`}>
+                {isCorrect ? 'Correct!' : 'Incorrect'}
+              </span>
+            </div>
+            <p className="text-gray-300 text-sm">
+              {currentQuestion?.explanation}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
@@ -252,14 +313,17 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
         
         <button
           onClick={handleNextQuestion}
-          disabled={!selectedAnswer}
+          disabled={!selectedAnswer || showFeedback}
           className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-            selectedAnswer
+            selectedAnswer && !showFeedback
               ? 'bg-red-600 text-white hover:bg-red-700'
               : 'bg-gray-600 text-gray-400 cursor-not-allowed'
           }`}
         >
-          {isLastQuestion ? 'Complete Quiz' : 'Next Question'}
+          {showFeedback 
+            ? (isLastQuestion ? 'Finishing...' : 'Next Question...') 
+            : (isLastQuestion ? 'Complete Quiz' : 'Next Question')
+          }
         </button>
       </div>
     </div>
