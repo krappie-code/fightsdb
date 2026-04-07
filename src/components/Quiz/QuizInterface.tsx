@@ -4,6 +4,15 @@ import React, { useState, useEffect } from 'react'
 import { QuizQuestion, QuizAnswer, QuizAttempt, QuizResult } from '@/types/quiz'
 import { questionGenerator } from '@/lib/quiz/questionGenerator'
 
+interface LeaderboardEntry {
+  username: string
+  score: number
+  maxScore: number
+  percentage: number
+  totalTime: number
+  completedAt: string
+}
+
 interface QuizInterfaceProps {
   quizTitle?: string
 }
@@ -25,9 +34,24 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   const [isQuestionActive, setIsQuestionActive] = useState(false)
   const [timeoutOccurred, setTimeoutOccurred] = useState(false)
   const [showIntro, setShowIntro] = useState(true)
+  const [hasCompletedToday, setHasCompletedToday] = useState(false)
+  const [showUsernameEntry, setShowUsernameEntry] = useState(false)
+  const [username, setUsername] = useState('')
 
-  // Load today's quiz on mount
+  // Check if user has completed today's quiz
   useEffect(() => {
+    const checkCompletedToday = () => {
+      const today = new Date().toISOString().split('T')[0]
+      const completedQuizzes = JSON.parse(localStorage.getItem('completed_quizzes') || '[]')
+      return completedQuizzes.includes(today)
+    }
+
+    if (checkCompletedToday()) {
+      setHasCompletedToday(true)
+      setIsLoading(false)
+      return
+    }
+
     const loadQuiz = async () => {
       try {
         const todaysQuestions = questionGenerator.getTodaysQuiz()
@@ -46,6 +70,43 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     setShowIntro(false)
     setStartTime(Date.now())
     startQuestionCountdown()
+  }
+
+  const saveToLeaderboard = (finalUsername: string) => {
+    if (!result) return
+    
+    const today = new Date().toISOString().split('T')[0]
+    const leaderboardKey = `leaderboard_${today}`
+    const leaderboard = JSON.parse(localStorage.getItem(leaderboardKey) || '[]')
+    
+    const entry = {
+      username: finalUsername || 'Anonymous',
+      score: result.attempt.score,
+      maxScore: result.attempt.max_score,
+      percentage: result.attempt.percentage,
+      totalTime: result.attempt.time_taken,
+      completedAt: result.attempt.completed_at
+    }
+    
+    leaderboard.push(entry)
+    
+    // Sort by score (desc), then by time (asc) for tie-breaking
+    leaderboard.sort((a: LeaderboardEntry, b: LeaderboardEntry) => {
+      if (b.score !== a.score) return b.score - a.score
+      return a.totalTime - b.totalTime
+    })
+    
+    // Keep only top 100 entries
+    const trimmedLeaderboard = leaderboard.slice(0, 100)
+    localStorage.setItem(leaderboardKey, JSON.stringify(trimmedLeaderboard))
+    
+    setShowUsernameEntry(false)
+  }
+
+  const getLeaderboard = () => {
+    const today = new Date().toISOString().split('T')[0]
+    const leaderboardKey = `leaderboard_${today}`
+    return JSON.parse(localStorage.getItem(leaderboardKey) || '[]')
   }
 
   // Question countdown timer (3-2-1)
@@ -191,11 +252,9 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
 
     setResult(quizResult)
     setIsComplete(true)
+    setShowUsernameEntry(true)
     
-    // Handle completion internally
-    console.log('Quiz completed:', quizResult)
-    
-    // Track completion in localStorage for streak tracking (future feature)
+    // Track completion in localStorage
     if (typeof window !== 'undefined') {
       const today = new Date().toISOString().split('T')[0]
       const completedQuizzes = JSON.parse(localStorage.getItem('completed_quizzes') || '[]')
@@ -307,6 +366,45 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     )
   }
 
+  // Already completed today's quiz
+  if (hasCompletedToday) {
+    const leaderboard = getLeaderboard()
+    return (
+      <div className="max-w-2xl mx-auto p-6">
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-4">✅</div>
+          <h1 className="text-3xl font-bold text-white mb-4">Quiz Already Completed</h1>
+          <p className="text-gray-300 text-lg">
+            You've already taken today's UFC quiz! Come back tomorrow for new questions.
+          </p>
+          <div className="mt-4 text-sm text-gray-400">
+            New quiz available at UTC midnight ({new Date(new Date().setUTCHours(24,0,0,0)).toLocaleString()})
+          </div>
+        </div>
+
+        {leaderboard.length > 0 && (
+          <div className="bg-slate-800 border border-gray-700 rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-4 text-center">📊 Today's Leaderboard</h2>
+            <div className="space-y-2">
+              {leaderboard.slice(0, 10).map((entry: LeaderboardEntry, index: number) => (
+                <div key={index} className="flex justify-between items-center py-2 px-3 bg-slate-700/50 rounded">
+                  <div className="flex items-center">
+                    <span className="text-gray-400 w-6">#{index + 1}</span>
+                    <span className="text-white font-medium ml-2">{entry.username}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
+                    <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   // Question countdown screen (3-2-1)
   if (questionCountdown !== null) {
     return (
@@ -324,12 +422,24 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   }
 
   if (isComplete && result) {
+    if (showUsernameEntry) {
+      return (
+        <UsernameEntryScreen 
+          result={result}
+          username={username}
+          setUsername={setUsername}
+          onSave={saveToLeaderboard}
+          onSkip={() => saveToLeaderboard('')}
+        />
+      )
+    }
+    
     return (
       <QuizResultsScreen 
         result={result} 
         questions={questions}
         onShare={shareResult}
-        onRetake={() => window.location.reload()}
+        leaderboard={getLeaderboard()}
       />
     )
   }
@@ -487,14 +597,93 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   )
 }
 
+interface UsernameEntryScreenProps {
+  result: QuizResult
+  username: string
+  setUsername: (username: string) => void
+  onSave: (username: string) => void
+  onSkip: () => void
+}
+
+function UsernameEntryScreen({ result, username, setUsername, onSave, onSkip }: UsernameEntryScreenProps) {
+  const { attempt, breakdown, performance_rating } = result
+
+  const performanceColor = 
+    performance_rating === 'Encyclopedia' ? 'text-purple-400' :
+    performance_rating === 'Expert' ? 'text-green-400' :
+    performance_rating === 'Fan' ? 'text-blue-400' : 'text-gray-400'
+
+  const performanceEmoji = 
+    performance_rating === 'Encyclopedia' ? '🏆' :
+    performance_rating === 'Expert' ? '⭐' :
+    performance_rating === 'Fan' ? '👍' : '📚'
+
+  return (
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="text-center mb-8">
+        <div className="text-6xl mb-4">{performanceEmoji}</div>
+        <h1 className="text-3xl font-bold text-white mb-2">Quiz Complete!</h1>
+        <div className={`text-xl font-semibold ${performanceColor}`}>
+          {performance_rating}
+        </div>
+      </div>
+
+      <div className="bg-slate-800 border border-gray-700 rounded-lg p-6 mb-6">
+        <div className="text-center mb-6">
+          <div className="text-5xl font-bold text-red-500 mb-2">
+            {attempt.score}/{attempt.max_score}
+          </div>
+          <div className="text-xl text-gray-300">
+            {attempt.percentage}% Correct
+          </div>
+          <div className="text-sm text-gray-400 mt-2">
+            Total Time: {Math.floor(attempt.time_taken / 60)}:{(attempt.time_taken % 60).toString().padStart(2, '0')}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-800 border border-gray-700 rounded-lg p-6">
+        <h2 className="text-xl font-bold text-white mb-4 text-center">Save to Leaderboard</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-gray-300 mb-2">Enter your name (optional):</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Your name or nickname"
+              className="w-full p-3 bg-slate-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:outline-none"
+              maxLength={20}
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => onSave(username)}
+              className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-red-700 transition-colors"
+            >
+              Save Score 🏆
+            </button>
+            <button
+              onClick={onSkip}
+              className="flex-1 bg-gray-700 text-gray-300 py-3 px-6 rounded-lg font-medium hover:bg-gray-600 transition-colors"
+            >
+              Skip (Anonymous)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 interface QuizResultsScreenProps {
   result: QuizResult
   questions: QuizQuestion[]
   onShare: () => void
-  onRetake: () => void
+  leaderboard: LeaderboardEntry[]
 }
 
-function QuizResultsScreen({ result, questions, onShare, onRetake }: QuizResultsScreenProps) {
+function QuizResultsScreen({ result, questions, onShare, leaderboard }: QuizResultsScreenProps) {
   const { attempt, breakdown, performance_rating } = result
 
   const performanceColor = 
@@ -553,7 +742,7 @@ function QuizResultsScreen({ result, questions, onShare, onRetake }: QuizResults
       </div>
 
       {/* Actions */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <button
           onClick={onShare}
           className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors"
@@ -561,16 +750,40 @@ function QuizResultsScreen({ result, questions, onShare, onRetake }: QuizResults
           📱 Share Your Score
         </button>
         
-        <button
-          onClick={onRetake}
-          className="w-full bg-gray-700 text-gray-300 py-3 px-6 rounded-lg font-medium hover:bg-gray-600 transition-colors"
-        >
-          🔄 Take Tomorrow's Quiz
-        </button>
-        
-        <div className="text-center text-sm text-gray-400">
-          Come back tomorrow for a new quiz!
+        <div className="text-center">
+          <div className="text-gray-300 font-medium mb-2">✅ Score saved to today's leaderboard!</div>
+          <div className="text-sm text-gray-400">
+            Come back tomorrow for a new quiz at UTC midnight
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            ({new Date(new Date().setUTCHours(24,0,0,0)).toLocaleString()})
+          </div>
         </div>
+
+        {leaderboard.length > 0 && (
+          <div className="bg-slate-700/50 border border-gray-600 rounded-lg p-4">
+            <h3 className="text-lg font-bold text-white mb-3 text-center">📊 Today's Top Scores</h3>
+            <div className="space-y-2">
+              {leaderboard.slice(0, 5).map((entry: LeaderboardEntry, index: number) => (
+                <div key={index} className="flex justify-between items-center py-2 px-3 bg-slate-600/50 rounded">
+                  <div className="flex items-center">
+                    <span className="text-gray-400 w-6">#{index + 1}</span>
+                    <span className="text-white font-medium ml-2">{entry.username}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
+                    <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {leaderboard.length > 5 && (
+              <div className="text-center text-xs text-gray-500 mt-2">
+                ...and {leaderboard.length - 5} more entries
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
