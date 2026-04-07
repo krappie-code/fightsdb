@@ -11,6 +11,19 @@ export interface LeaderboardEntry {
   completedAt: string
 }
 
+export interface LeaderboardResponse {
+  leaderboard: LeaderboardEntry[]
+  currentPage: number
+  totalCount: number
+  hasMore: boolean
+  userRank?: number
+}
+
+export interface UserScore {
+  score: number
+  totalTime: number
+}
+
 export class QuizLeaderboardAPI {
   
   // Save score to server leaderboard
@@ -53,41 +66,113 @@ export class QuizLeaderboardAPI {
     }
   }
 
-  // Get leaderboard for specific date
-  static async getLeaderboard(date?: string): Promise<LeaderboardEntry[]> {
+  // Get leaderboard for specific date with pagination
+  static async getLeaderboard(
+    date?: string, 
+    page: number = 1, 
+    limit: number = 50
+  ): Promise<LeaderboardResponse> {
     try {
       const queryDate = date || new Date().toISOString().split('T')[0]
-      console.log(`📊 Fetching leaderboard for ${queryDate}...`)
+      console.log(`📊 Fetching leaderboard for ${queryDate}, page ${page}...`)
       
-      const response = await fetch(`/api/quiz/leaderboard?date=${queryDate}`)
+      const params = new URLSearchParams({
+        date: queryDate,
+        page: page.toString(),
+        limit: limit.toString()
+      })
+      
+      const response = await fetch(`/api/quiz/leaderboard?${params}`)
       const result = await response.json()
       
       if (!response.ok) {
         console.warn('Server leaderboard unavailable:', result.error || response.statusText)
         console.log('Using local storage leaderboard...')
         // Fallback to localStorage if server fails
-        return this.getLeaderboardFromLocalStorage(date)
+        const localEntries = this.getLeaderboardFromLocalStorage(date)
+        return {
+          leaderboard: localEntries,
+          currentPage: 1,
+          totalCount: localEntries.length,
+          hasMore: false
+        }
       }
 
-      const entries = result.leaderboard || []
-      console.log(`✅ Loaded ${entries.length} entries from server leaderboard`)
+      console.log(`✅ Loaded ${result.leaderboard?.length || 0} entries from server leaderboard`)
       
-      if (entries.length === 0) {
+      if (result.leaderboard?.length === 0) {
         console.log('📝 No scores yet today - checking localStorage as backup...')
         const localEntries = this.getLeaderboardFromLocalStorage(date)
         if (localEntries.length > 0) {
           console.log(`📱 Found ${localEntries.length} local entries`)
-          return localEntries
+          return {
+            leaderboard: localEntries,
+            currentPage: 1,
+            totalCount: localEntries.length,
+            hasMore: false
+          }
         }
       }
       
-      return entries
+      return {
+        leaderboard: result.leaderboard || [],
+        currentPage: result.currentPage || page,
+        totalCount: result.totalCount || 0,
+        hasMore: result.hasMore || false,
+        userRank: result.userRank
+      }
     } catch (error) {
       console.error('Error fetching server leaderboard:', error)
       console.log('Using local storage leaderboard...')
       
       // Fallback to localStorage if server fails
-      return this.getLeaderboardFromLocalStorage(date)
+      const localEntries = this.getLeaderboardFromLocalStorage(date)
+      return {
+        leaderboard: localEntries,
+        currentPage: 1,
+        totalCount: localEntries.length,
+        hasMore: false
+      }
+    }
+  }
+
+  // Find user's position in leaderboard
+  static async findUserInLeaderboard(
+    userScore: UserScore,
+    date?: string
+  ): Promise<LeaderboardResponse> {
+    try {
+      const queryDate = date || new Date().toISOString().split('T')[0]
+      console.log(`👤 Finding user position: score=${userScore.score}, time=${userScore.totalTime}`)
+      
+      const params = new URLSearchParams({
+        date: queryDate,
+        findUser: 'true',
+        userScore: userScore.score.toString(),
+        userTime: userScore.totalTime.toString(),
+        limit: '50'
+      })
+      
+      const response = await fetch(`/api/quiz/leaderboard?${params}`)
+      const result = await response.json()
+      
+      if (!response.ok) {
+        console.warn('Cannot find user position, falling back to regular leaderboard')
+        return this.getLeaderboard(date)
+      }
+
+      console.log(`👤 User found at rank ${result.userRank}`)
+      return {
+        leaderboard: result.leaderboard || [],
+        currentPage: result.currentPage || 1,
+        totalCount: result.totalCount || 0,
+        hasMore: result.hasMore || false,
+        userRank: result.userRank
+      }
+    } catch (error) {
+      console.error('Error finding user position:', error)
+      // Fallback to regular leaderboard
+      return this.getLeaderboard(date)
     }
   }
 

@@ -5,7 +5,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-// GET /api/quiz/leaderboard?date=YYYY-MM-DD
+// GET /api/quiz/leaderboard?date=YYYY-MM-DD&page=1&limit=50&findUser=true&userScore=8&userTime=120
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 Leaderboard API called')
@@ -14,15 +14,68 @@ export async function GET(request: NextRequest) {
     
     const searchParams = request.nextUrl.searchParams
     const date = searchParams.get('date') || new Date().toISOString().split('T')[0]
-    console.log('📅 Fetching leaderboard for date:', date)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const findUser = searchParams.get('findUser') === 'true'
+    const userScore = searchParams.get('userScore')
+    const userTime = searchParams.get('userTime')
     
+    console.log('📅 Fetching leaderboard for date:', date, 'page:', page, 'limit:', limit)
+    
+    // If finding user position, get their rank first
+    if (findUser && userScore && userTime) {
+      const userRankQuery = await supabase
+        .rpc('get_user_rank', {
+          target_date: date,
+          target_score: parseInt(userScore),
+          target_time: parseInt(userTime)
+        })
+      
+      if (userRankQuery.data) {
+        const userRank = userRankQuery.data
+        const userPage = Math.ceil(userRank / limit)
+        console.log(`👤 User rank: ${userRank}, jumping to page: ${userPage}`)
+        
+        // Get the page containing the user
+        const offset = (userPage - 1) * limit
+        const { data, error } = await supabase
+          .from('quiz_leaderboard')
+          .select('*')
+          .eq('quiz_date', date)
+          .order('score', { ascending: false })
+          .order('total_time', { ascending: true })
+          .range(offset, offset + limit - 1)
+        
+        const mappedData = (data || []).map((entry: any) => ({
+          id: entry.id,
+          username: entry.username,
+          score: entry.score,
+          maxScore: entry.max_score,
+          percentage: entry.percentage,
+          totalTime: entry.total_time,
+          quizDate: entry.quiz_date,
+          completedAt: entry.completed_at
+        }))
+        
+        return NextResponse.json({ 
+          leaderboard: mappedData, 
+          currentPage: userPage,
+          totalCount: userRank + 50, // Rough estimate
+          userRank,
+          hasMore: true
+        })
+      }
+    }
+    
+    // Regular pagination
+    const offset = (page - 1) * limit
     const { data, error } = await supabase
       .from('quiz_leaderboard')
       .select('*')
       .eq('quiz_date', date)
       .order('score', { ascending: false })
       .order('total_time', { ascending: true })
-      .limit(100)
+      .range(offset, offset + limit - 1)
     
     if (error) {
       console.error('Error fetching leaderboard:', error)
@@ -30,6 +83,12 @@ export async function GET(request: NextRequest) {
       // Return empty leaderboard instead of error to gracefully fallback
       return NextResponse.json({ leaderboard: [], error: error.message }, { status: 200 })
     }
+    
+    // Get total count for pagination
+    const { count } = await supabase
+      .from('quiz_leaderboard')
+      .select('*', { count: 'exact', head: true })
+      .eq('quiz_date', date)
     
     // Map database fields to frontend expectations
     const mappedData = (data || []).map((entry: any) => ({
@@ -43,7 +102,12 @@ export async function GET(request: NextRequest) {
       completedAt: entry.completed_at
     }))
     
-    return NextResponse.json({ leaderboard: mappedData })
+    return NextResponse.json({ 
+      leaderboard: mappedData,
+      currentPage: page,
+      totalCount: count || 0,
+      hasMore: (page * limit) < (count || 0)
+    })
   } catch (error) {
     console.error('API Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

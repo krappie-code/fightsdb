@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { QuizQuestion, QuizAnswer, QuizAttempt, QuizResult } from '@/types/quiz'
 import { questionGenerator } from '@/lib/quiz/questionGenerator'
-import { QuizLeaderboardAPI, LeaderboardEntry } from '@/lib/quiz/leaderboard'
+import { QuizLeaderboardAPI, LeaderboardEntry, LeaderboardResponse, UserScore } from '@/lib/quiz/leaderboard'
 
 interface QuizInterfaceProps {
   quizTitle?: string
@@ -31,6 +31,11 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   const [username, setUsername] = useState('')
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [loadingLeaderboard, setLoadingLeaderboard] = useState(false)
+  const [currentUserScore, setCurrentUserScore] = useState<UserScore | null>(null)
+  const [leaderboardPage, setLeaderboardPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
+  const [userRank, setUserRank] = useState<number | undefined>(undefined)
 
   // Check if user has completed today's quiz and load questions
   useEffect(() => {
@@ -89,12 +94,29 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     }
   }
 
-  const getLeaderboard = async (): Promise<LeaderboardEntry[]> => {
+  const loadLeaderboard = async (page: number = 1, findUser: boolean = false) => {
+    setLoadingLeaderboard(true)
     try {
-      return await QuizLeaderboardAPI.getLeaderboard()
+      let response: LeaderboardResponse
+      
+      if (findUser && currentUserScore) {
+        response = await QuizLeaderboardAPI.findUserInLeaderboard(currentUserScore)
+      } else {
+        response = await QuizLeaderboardAPI.getLeaderboard(undefined, page)
+      }
+      
+      setLeaderboard(response.leaderboard)
+      setLeaderboardPage(response.currentPage)
+      setTotalCount(response.totalCount)
+      setHasMore(response.hasMore)
+      setUserRank(response.userRank)
+      
+      console.log(`📊 Loaded ${response.leaderboard.length} entries, page ${response.currentPage}/${Math.ceil(response.totalCount / 50)}`)
     } catch (error) {
-      console.error('Error fetching leaderboard:', error)
-      return []
+      console.error('Error loading leaderboard:', error)
+      setLeaderboard([])
+    } finally {
+      setLoadingLeaderboard(false)
     }
   }
 
@@ -244,6 +266,12 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     setResult(quizResult)
     setIsComplete(true)
     setShowUsernameEntry(true)
+    
+    // Store user's score for leaderboard highlighting
+    setCurrentUserScore({
+      score: quizResult.attempt.score,
+      totalTime: quizResult.attempt.time_taken
+    })
   }
 
   const shareResult = () => {
@@ -353,17 +381,14 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
       <AlreadyCompletedScreen 
         leaderboard={leaderboard}
         loadingLeaderboard={loadingLeaderboard}
-        onLoadLeaderboard={async () => {
-          setLoadingLeaderboard(true)
-          try {
-            const data = await getLeaderboard()
-            setLeaderboard(data)
-          } catch (error) {
-            console.error('Error loading leaderboard:', error)
-          } finally {
-            setLoadingLeaderboard(false)
-          }
-        }}
+        currentPage={leaderboardPage}
+        totalCount={totalCount}
+        hasMore={hasMore}
+        userRank={userRank}
+        currentUserScore={currentUserScore || undefined}
+        onLoadLeaderboard={loadLeaderboard}
+        onPageChange={(page) => loadLeaderboard(page)}
+        onFindMe={() => loadLeaderboard(1, true)}
       />
     )
   }
@@ -404,17 +429,14 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
         onShare={shareResult}
         leaderboard={leaderboard}
         loadingLeaderboard={loadingLeaderboard}
-        onLoadLeaderboard={async () => {
-          setLoadingLeaderboard(true)
-          try {
-            const data = await getLeaderboard()
-            setLeaderboard(data)
-          } catch (error) {
-            console.error('Error loading leaderboard:', error)
-          } finally {
-            setLoadingLeaderboard(false)
-          }
-        }}
+        currentPage={leaderboardPage}
+        totalCount={totalCount}
+        hasMore={hasMore}
+        userRank={userRank}
+        currentUserScore={currentUserScore || undefined}
+        onLoadLeaderboard={loadLeaderboard}
+        onPageChange={(page) => loadLeaderboard(page)}
+        onFindMe={() => loadLeaderboard(1, true)}
       />
     )
   }
@@ -585,10 +607,28 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
 interface AlreadyCompletedScreenProps {
   leaderboard: LeaderboardEntry[]
   loadingLeaderboard: boolean
-  onLoadLeaderboard: () => void
+  currentPage: number
+  totalCount: number
+  hasMore: boolean
+  userRank?: number
+  currentUserScore?: UserScore
+  onLoadLeaderboard: (page?: number, findUser?: boolean) => void
+  onPageChange: (page: number) => void
+  onFindMe: () => void
 }
 
-function AlreadyCompletedScreen({ leaderboard, loadingLeaderboard, onLoadLeaderboard }: AlreadyCompletedScreenProps) {
+function AlreadyCompletedScreen({ 
+  leaderboard, 
+  loadingLeaderboard, 
+  currentPage, 
+  totalCount, 
+  hasMore, 
+  userRank,
+  currentUserScore,
+  onLoadLeaderboard, 
+  onPageChange, 
+  onFindMe 
+}: AlreadyCompletedScreenProps) {
   // Load leaderboard on mount
   React.useEffect(() => {
     if (leaderboard.length === 0 && !loadingLeaderboard) {
@@ -596,8 +636,13 @@ function AlreadyCompletedScreen({ leaderboard, loadingLeaderboard, onLoadLeaderb
     }
   }, [leaderboard.length, loadingLeaderboard, onLoadLeaderboard])
 
+  const isCurrentUser = (entry: LeaderboardEntry) => {
+    if (!currentUserScore) return false
+    return entry.score === currentUserScore.score && entry.totalTime === currentUserScore.totalTime
+  }
+
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6">
       <div className="text-center mb-8">
         <div className="text-6xl mb-4">✅</div>
         <h1 className="text-3xl font-bold text-white mb-4">Quiz Already Completed</h1>
@@ -607,10 +652,28 @@ function AlreadyCompletedScreen({ leaderboard, loadingLeaderboard, onLoadLeaderb
         <div className="mt-4 text-sm text-gray-400">
           New quiz available at UTC midnight ({new Date(new Date().setUTCHours(24,0,0,0)).toLocaleString()})
         </div>
+        {userRank && (
+          <div className="mt-2 text-lg text-yellow-400 font-semibold">
+            🏆 Your Rank: #{userRank} out of {totalCount}
+          </div>
+        )}
       </div>
 
       <div className="bg-slate-800 border border-gray-700 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-white mb-4 text-center">📊 Today's Leaderboard</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-white">📊 Today's Leaderboard</h2>
+          <div className="flex gap-2">
+            {currentUserScore && (
+              <button
+                onClick={onFindMe}
+                className="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm rounded-lg transition-colors"
+                disabled={loadingLeaderboard}
+              >
+                👤 Find Me
+              </button>
+            )}
+          </div>
+        </div>
         
         {loadingLeaderboard ? (
           <div className="text-center py-8">
@@ -618,25 +681,76 @@ function AlreadyCompletedScreen({ leaderboard, loadingLeaderboard, onLoadLeaderb
             <p className="text-gray-400">Loading leaderboard...</p>
           </div>
         ) : leaderboard.length > 0 ? (
-          <div className="space-y-2">
-            {leaderboard.slice(0, 10).map((entry: LeaderboardEntry, index: number) => (
-              <div key={entry.id || index} className="flex justify-between items-center py-2 px-3 bg-slate-700/50 rounded">
-                <div className="flex items-center">
-                  <span className="text-gray-400 w-6">#{index + 1}</span>
-                  <span className="text-white font-medium ml-2">{entry.username}</span>
+          <>
+            <div className="space-y-2">
+              {leaderboard.map((entry: LeaderboardEntry, index: number) => {
+                const globalRank = (currentPage - 1) * 50 + index + 1
+                const isUser = isCurrentUser(entry)
+                
+                return (
+                  <div 
+                    key={entry.id || index} 
+                    className={`flex justify-between items-center py-3 px-4 rounded-lg ${
+                      isUser 
+                        ? 'bg-yellow-900/50 border border-yellow-600 shadow-lg' 
+                        : 'bg-slate-700/50'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span className={`w-8 text-center font-medium ${
+                        isUser ? 'text-yellow-400' : 'text-gray-400'
+                      }`}>
+                        #{globalRank}
+                      </span>
+                      <span className={`font-medium ml-3 ${
+                        isUser ? 'text-yellow-300' : 'text-white'
+                      }`}>
+                        {entry.username}
+                        {isUser && ' 👑'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="text-green-400 font-medium">{entry.score}/{entry.maxScore}</span>
+                      <span className="text-gray-400 font-mono">
+                        {entry.totalTime && !isNaN(entry.totalTime) 
+                          ? `${Math.floor(entry.totalTime / 60)}:${(entry.totalTime % 60).toString().padStart(2, '0')}`
+                          : '--:--'
+                        }
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            
+            {/* Pagination */}
+            {totalCount > 50 && (
+              <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-700">
+                <div className="text-sm text-gray-400">
+                  Showing {(currentPage - 1) * 50 + 1}-{Math.min(currentPage * 50, totalCount)} of {totalCount} entries
                 </div>
-                <div className="flex items-center gap-4 text-sm">
-                  <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
-                  <span className="text-gray-400">
-                    {entry.totalTime && !isNaN(entry.totalTime) 
-                      ? `${Math.floor(entry.totalTime / 60)}:${(entry.totalTime % 60).toString().padStart(2, '0')}`
-                      : '--:--'
-                    }
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1 || loadingLeaderboard}
+                    className="px-3 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-600 text-white text-sm rounded-lg transition-colors"
+                  >
+                    ← Prev
+                  </button>
+                  <span className="px-3 py-2 bg-slate-700 text-white text-sm rounded-lg">
+                    Page {currentPage}
                   </span>
+                  <button
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={!hasMore || loadingLeaderboard}
+                    className="px-3 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-600 text-white text-sm rounded-lg transition-colors"
+                  >
+                    Next →
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-8 text-gray-400">
             No scores yet today. Be the first to take the quiz!
@@ -735,16 +849,42 @@ interface QuizResultsScreenProps {
   onShare: () => void
   leaderboard: LeaderboardEntry[]
   loadingLeaderboard: boolean
-  onLoadLeaderboard: () => void
+  currentPage: number
+  totalCount: number
+  hasMore: boolean
+  userRank?: number
+  currentUserScore?: UserScore
+  onLoadLeaderboard: (page?: number, findUser?: boolean) => void
+  onPageChange: (page: number) => void
+  onFindMe: () => void
 }
 
-function QuizResultsScreen({ result, questions, onShare, leaderboard, loadingLeaderboard, onLoadLeaderboard }: QuizResultsScreenProps) {
+function QuizResultsScreen({ 
+  result, 
+  questions, 
+  onShare, 
+  leaderboard, 
+  loadingLeaderboard,
+  currentPage,
+  totalCount,
+  hasMore,
+  userRank,
+  currentUserScore,
+  onLoadLeaderboard, 
+  onPageChange,
+  onFindMe
+}: QuizResultsScreenProps) {
   // Load leaderboard on mount
   React.useEffect(() => {
     if (leaderboard.length === 0 && !loadingLeaderboard) {
       onLoadLeaderboard()
     }
   }, [leaderboard.length, loadingLeaderboard, onLoadLeaderboard])
+  
+  const isCurrentUser = (entry: LeaderboardEntry) => {
+    if (!currentUserScore) return false
+    return entry.score === currentUserScore.score && entry.totalTime === currentUserScore.totalTime
+  }
   const { attempt, breakdown, performance_rating } = result
 
   const performanceColor = 
@@ -825,7 +965,26 @@ function QuizResultsScreen({ result, questions, onShare, leaderboard, loadingLea
         </div>
 
         <div className="bg-slate-700/50 border border-gray-600 rounded-lg p-4">
-          <h3 className="text-lg font-bold text-white mb-3 text-center">📊 Today's Top Scores</h3>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-bold text-white">📊 Today's Leaderboard</h3>
+            {currentUserScore && totalCount > 50 && (
+              <button
+                onClick={onFindMe}
+                className="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm rounded-lg transition-colors"
+                disabled={loadingLeaderboard}
+              >
+                👤 Find Me
+              </button>
+            )}
+          </div>
+          
+          {userRank && (
+            <div className="text-center mb-4 p-2 bg-yellow-900/30 rounded-lg border border-yellow-600/50">
+              <div className="text-yellow-400 font-semibold">
+                🏆 Your Rank: #{userRank} out of {totalCount}
+              </div>
+            </div>
+          )}
           
           {loadingLeaderboard ? (
             <div className="text-center py-4">
@@ -835,27 +994,70 @@ function QuizResultsScreen({ result, questions, onShare, leaderboard, loadingLea
           ) : leaderboard.length > 0 ? (
             <>
               <div className="space-y-2">
-                {leaderboard.slice(0, 5).map((entry: LeaderboardEntry, index: number) => (
-                  <div key={entry.id || index} className="flex justify-between items-center py-2 px-3 bg-slate-600/50 rounded">
-                    <div className="flex items-center">
-                      <span className="text-gray-400 w-6">#{index + 1}</span>
-                      <span className="text-white font-medium ml-2">{entry.username}</span>
+                {leaderboard.slice(0, 10).map((entry: LeaderboardEntry, index: number) => {
+                  const globalRank = (currentPage - 1) * 50 + index + 1
+                  const isUser = isCurrentUser(entry)
+                  
+                  return (
+                    <div 
+                      key={entry.id || index} 
+                      className={`flex justify-between items-center py-2 px-3 rounded ${
+                        isUser 
+                          ? 'bg-yellow-900/50 border border-yellow-600' 
+                          : 'bg-slate-600/50'
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <span className={`w-6 text-center font-medium ${
+                          isUser ? 'text-yellow-400' : 'text-gray-400'
+                        }`}>
+                          #{globalRank}
+                        </span>
+                        <span className={`font-medium ml-2 ${
+                          isUser ? 'text-yellow-300' : 'text-white'
+                        }`}>
+                          {entry.username}
+                          {isUser && ' 👑'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm">
+                        <span className="text-green-400 font-medium">{entry.score}/{entry.maxScore}</span>
+                        <span className="text-gray-400 font-mono">
+                          {entry.totalTime && !isNaN(entry.totalTime) 
+                            ? `${Math.floor(entry.totalTime / 60)}:${(entry.totalTime % 60).toString().padStart(2, '0')}`
+                            : '--:--'
+                          }
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm">
-                      <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
-                      <span className="text-gray-400">
-                      {entry.totalTime && !isNaN(entry.totalTime) 
-                        ? `${Math.floor(entry.totalTime / 60)}:${(entry.totalTime % 60).toString().padStart(2, '0')}`
-                        : '--:--'
-                      }
-                    </span>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
-              {leaderboard.length > 5 && (
-                <div className="text-center text-xs text-gray-500 mt-2">
-                  ...and {leaderboard.length - 5} more entries
+              
+              {totalCount > 50 && (
+                <div className="flex justify-between items-center mt-4 pt-3 border-t border-gray-600 text-xs">
+                  <div className="text-gray-400">
+                    Showing {(currentPage - 1) * 50 + 1}-{Math.min(currentPage * 50, totalCount)} of {totalCount}
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => onPageChange(currentPage - 1)}
+                      disabled={currentPage === 1 || loadingLeaderboard}
+                      className="px-2 py-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-600 text-white text-xs rounded transition-colors"
+                    >
+                      ←
+                    </button>
+                    <span className="px-2 py-1 bg-slate-600 text-white text-xs rounded">
+                      {currentPage}
+                    </span>
+                    <button
+                      onClick={() => onPageChange(currentPage + 1)}
+                      disabled={!hasMore || loadingLeaderboard}
+                      className="px-2 py-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-600 text-white text-xs rounded transition-colors"
+                    >
+                      →
+                    </button>
+                  </div>
                 </div>
               )}
             </>
