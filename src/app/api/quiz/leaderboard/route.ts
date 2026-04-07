@@ -21,7 +21,9 @@ export async function GET(request: NextRequest) {
     
     if (error) {
       console.error('Error fetching leaderboard:', error)
-      return NextResponse.json({ error: 'Failed to fetch leaderboard' }, { status: 500 })
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      // Return empty leaderboard instead of error to gracefully fallback
+      return NextResponse.json({ leaderboard: [], error: error.message }, { status: 200 })
     }
     
     return NextResponse.json({ leaderboard: data || [] })
@@ -60,7 +62,13 @@ export async function POST(request: NextRequest) {
     
     if (error) {
       console.error('Error saving to leaderboard:', error)
-      return NextResponse.json({ error: 'Failed to save score' }, { status: 500 })
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      console.error('Entry data:', JSON.stringify(entryData, null, 2))
+      return NextResponse.json({ 
+        error: 'Failed to save score', 
+        details: error.message,
+        fallback: 'Score will be saved locally instead'
+      }, { status: 500 })
     }
     
     return NextResponse.json({ success: true, entry: data })

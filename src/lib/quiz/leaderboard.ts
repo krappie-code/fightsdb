@@ -31,15 +31,21 @@ export class QuizLeaderboardAPI {
         })
       })
 
+      const result = await response.json()
+      
       if (!response.ok) {
-        throw new Error(`Failed to save score: ${response.statusText}`)
+        console.warn('Server leaderboard failed:', result.error || response.statusText)
+        console.log('Falling back to local storage...')
+        // Fallback to localStorage if server fails
+        this.saveScoreToLocalStorage(entry)
+        return false
       }
 
-      const result = await response.json()
-      console.log('Score saved to leaderboard:', result)
+      console.log('Score saved to server leaderboard:', result)
       return true
     } catch (error) {
       console.error('Error saving score to leaderboard:', error)
+      console.log('Falling back to local storage...')
       
       // Fallback to localStorage if server fails
       this.saveScoreToLocalStorage(entry)
@@ -53,14 +59,20 @@ export class QuizLeaderboardAPI {
       const queryDate = date || new Date().toISOString().split('T')[0]
       const response = await fetch(`/api/quiz/leaderboard?date=${queryDate}`)
 
+      const result = await response.json()
+      
       if (!response.ok) {
-        throw new Error(`Failed to fetch leaderboard: ${response.statusText}`)
+        console.warn('Server leaderboard unavailable:', result.error || response.statusText)
+        console.log('Using local storage leaderboard...')
+        // Fallback to localStorage if server fails
+        return this.getLeaderboardFromLocalStorage(date)
       }
 
-      const result = await response.json()
+      console.log(`Loaded ${result.leaderboard?.length || 0} entries from server leaderboard`)
       return result.leaderboard || []
     } catch (error) {
-      console.error('Error fetching leaderboard:', error)
+      console.error('Error fetching server leaderboard:', error)
+      console.log('Using local storage leaderboard...')
       
       // Fallback to localStorage if server fails
       return this.getLeaderboardFromLocalStorage(date)

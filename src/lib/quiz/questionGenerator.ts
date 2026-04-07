@@ -115,6 +115,67 @@ const MOCK_FIGHTS = [
     time: '3:15',
     weight_class: 'Lightweight',
     title_fight: false
+  },
+  // Additional fights for quiz variety (need 10+ unique fights)
+  {
+    id: '10',
+    event: { name: 'UFC 300: Historic Night', date: '2025-04-13', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Jon Jones', nickname: 'Bones' },
+    fighter2: { name: 'Stipe Miocic', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 3,
+    time: '2:15',
+    weight_class: 'Heavyweight',
+    title_fight: true
+  },
+  {
+    id: '11', 
+    event: { name: 'UFC 299: Miami Madness', date: '2025-03-09', location: 'Miami, FL' },
+    fighter1: { name: 'Sean O\'Malley', nickname: 'Suga' },
+    fighter2: { name: 'Marlon Vera', nickname: 'Chito' },
+    result: 'Win',
+    method: 'Decision', 
+    round: 5,
+    time: '5:00',
+    weight_class: 'Bantamweight',
+    title_fight: true
+  },
+  {
+    id: '12',
+    event: { name: 'UFC Fight Night: London', date: '2025-07-27', location: 'London, England' },
+    fighter1: { name: 'Tom Aspinall', nickname: '' },
+    fighter2: { name: 'Curtis Blaydes', nickname: 'Razor' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 1,
+    time: '1:09',
+    weight_class: 'Heavyweight',
+    title_fight: false
+  },
+  {
+    id: '13',
+    event: { name: 'UFC 301: Rio Spectacular', date: '2025-05-04', location: 'Rio de Janeiro, Brazil' },
+    fighter1: { name: 'Alexandre Pantoja', nickname: 'The Cannibal' },
+    fighter2: { name: 'Steve Erceg', nickname: 'Astro Boy' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Flyweight',
+    title_fight: true
+  },
+  {
+    id: '14',
+    event: { name: 'UFC Fight Night: Austin', date: '2025-12-14', location: 'Austin, TX' },
+    fighter1: { name: 'Colby Covington', nickname: 'Chaos' },
+    fighter2: { name: 'Joaquin Buckley', nickname: 'New Mansa' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Welterweight',
+    title_fight: false
   }
 ]
 
