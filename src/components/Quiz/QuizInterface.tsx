@@ -20,6 +20,10 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
   const [result, setResult] = useState<QuizResult | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState<boolean>(false)
+  const [questionCountdown, setQuestionCountdown] = useState<number | null>(null)
+  const [questionTimer, setQuestionTimer] = useState<number>(5)
+  const [isQuestionActive, setIsQuestionActive] = useState(false)
+  const [timeoutOccurred, setTimeoutOccurred] = useState(false)
 
   // Load today's quiz on mount
   useEffect(() => {
@@ -28,8 +32,9 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
         const todaysQuestions = questionGenerator.getTodaysQuiz()
         setQuestions(todaysQuestions)
         setStartTime(Date.now())
-        setQuestionStartTime(Date.now())
         setIsLoading(false)
+        // Start first question countdown
+        startQuestionCountdown()
       } catch (error) {
         console.error('Failed to load quiz:', error)
         setIsLoading(false)
@@ -39,48 +44,104 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     loadQuiz()
   }, [])
 
-  const currentQuestion = questions[currentQuestionIndex]
-  const isLastQuestion = currentQuestionIndex === questions.length - 1
+  // Question countdown timer (3-2-1)
+  useEffect(() => {
+    if (questionCountdown !== null && questionCountdown > 0) {
+      const timer = setTimeout(() => {
+        setQuestionCountdown(questionCountdown - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else if (questionCountdown === 0) {
+      // Countdown finished, start question
+      setQuestionCountdown(null)
+      setIsQuestionActive(true)
+      setQuestionTimer(5)
+      setQuestionStartTime(Date.now())
+    }
+  }, [questionCountdown])
 
-  const handleAnswerSelect = (answer: string) => {
-    setSelectedAnswer(answer)
+  // 5-second question timer
+  useEffect(() => {
+    if (isQuestionActive && questionTimer > 0 && !selectedAnswer && !showFeedback) {
+      const timer = setTimeout(() => {
+        setQuestionTimer(questionTimer - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else if (isQuestionActive && questionTimer === 0 && !selectedAnswer && !showFeedback) {
+      // Time's up! Auto-fail
+      handleTimeout()
+    }
+  }, [isQuestionActive, questionTimer, selectedAnswer, showFeedback])
+
+  const startQuestionCountdown = () => {
+    setQuestionCountdown(3)
+    setIsQuestionActive(false)
+    setSelectedAnswer('')
+    setShowFeedback(false)
+    setTimeoutOccurred(false)
   }
 
-  const handleNextQuestion = () => {
-    if (!selectedAnswer) return
-
-    // Record answer
-    const timeTaken = Math.round((Date.now() - questionStartTime) / 1000)
+  const handleTimeout = () => {
+    setTimeoutOccurred(true)
+    setIsQuestionActive(false)
+    
+    // Record as incorrect answer
+    const timeTaken = 5 // Full 5 seconds
     const answer: QuizAnswer = {
       question_id: currentQuestion.id,
-      selected_answer: selectedAnswer,
-      is_correct: selectedAnswer === currentQuestion.correct_answer,
+      selected_answer: 'TIMEOUT',
+      is_correct: false,
       time_taken: timeTaken
     }
 
     const newAnswers = [...answers, answer]
     setAnswers(newAnswers)
-
-    // Show feedback
-    setIsCorrect(answer.is_correct)
+    setIsCorrect(false)
     setShowFeedback(true)
+  }
 
-    // Wait 1.5 seconds to show feedback, then advance
-    setTimeout(() => {
-      setShowFeedback(false)
-      
+  const currentQuestion = questions[currentQuestionIndex]
+  const isLastQuestion = currentQuestionIndex === questions.length - 1
+
+  const handleAnswerSelect = (answer: string) => {
+    if (!isQuestionActive || showFeedback) return
+    setSelectedAnswer(answer)
+    setIsQuestionActive(false) // Stop timer when answer is selected
+  }
+
+  const handleNextQuestion = () => {
+    if (!showFeedback && !selectedAnswer && !timeoutOccurred) return
+
+    if (!showFeedback) {
+      // First click - submit answer and show feedback
+      const timeTaken = Math.round((Date.now() - questionStartTime) / 1000)
+      const answer: QuizAnswer = {
+        question_id: currentQuestion.id,
+        selected_answer: selectedAnswer,
+        is_correct: selectedAnswer === currentQuestion.correct_answer,
+        time_taken: timeTaken
+      }
+
+      const newAnswers = [...answers, answer]
+      setAnswers(newAnswers)
+
+      // Show feedback
+      setIsCorrect(answer.is_correct)
+      setShowFeedback(true)
+    } else {
+      // Second click - advance to next question or complete
       if (isLastQuestion) {
         // Quiz complete!
-        completeQuiz(newAnswers)
+        const finalAnswers = timeoutOccurred && answers.length === questions.length - 1 
+          ? answers 
+          : [...answers]
+        completeQuiz(finalAnswers)
       } else {
-        // Next question
+        // Next question - start countdown
         setCurrentQuestionIndex(prev => prev + 1)
-        setSelectedAnswer('')
-        setQuestionStartTime(Date.now())
-        setShowFeedback(false)
-        setIsCorrect(false)
+        startQuestionCountdown()
       }
-    }, 1500)
+    }
   }
 
   const completeQuiz = (finalAnswers: QuizAnswer[]) => {
@@ -171,7 +232,23 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
     return (
       <div className="max-w-2xl mx-auto p-6 text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading today's UFC quiz...</p>
+        <p className="text-gray-300">Loading today's UFC quiz...</p>
+      </div>
+    )
+  }
+
+  // Question countdown screen (3-2-1)
+  if (questionCountdown !== null) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 text-center">
+        <h1 className="text-3xl font-bold text-white mb-8">{quizTitle}</h1>
+        <div className="text-gray-300 mb-4">
+          Question {currentQuestionIndex + 1} of {questions.length}
+        </div>
+        <div className="text-8xl font-bold text-red-500 mb-4 animate-pulse">
+          {questionCountdown}
+        </div>
+        <p className="text-gray-400">Get ready...</p>
       </div>
     )
   }
@@ -208,6 +285,17 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
             style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
           ></div>
         </div>
+
+        {/* Timer */}
+        {isQuestionActive && !showFeedback && (
+          <div className="mt-4 flex items-center justify-center">
+            <div className={`text-2xl font-bold px-4 py-2 rounded-lg ${
+              questionTimer <= 2 ? 'text-red-400 bg-red-900/30 animate-pulse' : 'text-yellow-400 bg-yellow-900/30'
+            }`}>
+              ⏱️ {questionTimer}s
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Question */}
@@ -239,7 +327,7 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
               // Show feedback colors
               if (option === currentQuestion.correct_answer) {
                 buttonClass += 'border-green-500 bg-green-900/30 text-green-200'
-              } else if (selectedAnswer === option && !isCorrect) {
+              } else if ((selectedAnswer === option && !isCorrect) || (timeoutOccurred && option !== currentQuestion.correct_answer)) {
                 buttonClass += 'border-red-500 bg-red-900/30 text-red-200'
               } else {
                 buttonClass += 'border-gray-600 bg-slate-700/50 text-gray-400'
@@ -256,8 +344,8 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
             return (
               <button
                 key={`${currentQuestion.id}-${index}`}
-                onClick={() => !showFeedback && handleAnswerSelect(option)}
-                disabled={showFeedback}
+                onClick={() => !showFeedback && !timeoutOccurred && isQuestionActive && handleAnswerSelect(option)}
+                disabled={showFeedback || timeoutOccurred || !isQuestionActive}
                 className={buttonClass}
               >
                 <div className="flex items-center justify-between">
@@ -272,7 +360,7 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
                       {option === currentQuestion.correct_answer && (
                         <span className="text-green-400 text-lg">✓</span>
                       )}
-                      {selectedAnswer === option && !isCorrect && option !== currentQuestion.correct_answer && (
+                      {((selectedAnswer === option && !isCorrect) || (timeoutOccurred && selectedAnswer !== option)) && option !== currentQuestion.correct_answer && (
                         <span className="text-red-400 text-lg">✗</span>
                       )}
                     </div>
@@ -291,12 +379,17 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
                 {isCorrect ? '✓' : '✗'}
               </span>
               <span className={`font-semibold ${isCorrect ? 'text-green-300' : 'text-red-300'}`}>
-                {isCorrect ? 'Correct!' : 'Incorrect'}
+                {timeoutOccurred ? 'Time\'s Up!' : (isCorrect ? 'Correct!' : 'Incorrect')}
               </span>
             </div>
             <p className="text-gray-300 text-sm">
               {currentQuestion?.explanation}
             </p>
+            {timeoutOccurred && (
+              <p className="text-yellow-300 text-xs mt-2">
+                ⏰ You ran out of time! The correct answer was: <strong>{currentQuestion?.correct_answer}</strong>
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -313,16 +406,16 @@ export function QuizInterface({ quizTitle = "Daily UFC Quiz" }: QuizInterfacePro
         
         <button
           onClick={handleNextQuestion}
-          disabled={!selectedAnswer || showFeedback}
+          disabled={(!selectedAnswer && !timeoutOccurred && !showFeedback) || questionCountdown !== null}
           className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-            selectedAnswer && !showFeedback
+            (selectedAnswer || timeoutOccurred || showFeedback) && questionCountdown === null
               ? 'bg-red-600 text-white hover:bg-red-700'
               : 'bg-gray-600 text-gray-400 cursor-not-allowed'
           }`}
         >
           {showFeedback 
-            ? (isLastQuestion ? 'Finishing...' : 'Next Question...') 
-            : (isLastQuestion ? 'Complete Quiz' : 'Next Question')
+            ? (isLastQuestion ? 'Complete Quiz' : 'Next Question →') 
+            : (isLastQuestion ? 'Submit Final Answer' : 'Submit Answer')
           }
         </button>
       </div>
@@ -371,7 +464,10 @@ function QuizResultsScreen({ result, questions, onShare, onRetake }: QuizResults
             {attempt.percentage}% Correct
           </div>
           <div className="text-sm text-gray-400 mt-2">
-            Completed in {Math.floor(attempt.time_taken / 60)}:{(attempt.time_taken % 60).toString().padStart(2, '0')}
+            Total Time: {Math.floor(attempt.time_taken / 60)}:{(attempt.time_taken % 60).toString().padStart(2, '0')}
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            💡 Time is used for tie-breaking on leaderboards
           </div>
         </div>
 
