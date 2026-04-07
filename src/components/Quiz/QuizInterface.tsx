@@ -627,7 +627,12 @@ function AlreadyCompletedScreen({ leaderboard, loadingLeaderboard, onLoadLeaderb
                 </div>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
-                  <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
+                  <span className="text-gray-400">
+                    {entry.totalTime && !isNaN(entry.totalTime) 
+                      ? `${Math.floor(entry.totalTime / 60)}:${(entry.totalTime % 60).toString().padStart(2, '0')}`
+                      : '--:--'
+                    }
+                  </span>
                 </div>
               </div>
             ))}
@@ -682,7 +687,10 @@ function UsernameEntryScreen({ result, username, setUsername, onSave, onSkip }: 
             {attempt.percentage}% Correct
           </div>
           <div className="text-sm text-gray-400 mt-2">
-            Total Time: {Math.floor(attempt.time_taken / 60)}:{(attempt.time_taken % 60).toString().padStart(2, '0')}
+            Total Time: {attempt.time_taken && !isNaN(attempt.time_taken) 
+              ? `${Math.floor(attempt.time_taken / 60)}:${(attempt.time_taken % 60).toString().padStart(2, '0')}`
+              : '--:--'
+            }
           </div>
         </div>
       </div>
@@ -770,7 +778,10 @@ function QuizResultsScreen({ result, questions, onShare, leaderboard, loadingLea
             {attempt.percentage}% Correct
           </div>
           <div className="text-sm text-gray-400 mt-2">
-            Total Time: {Math.floor(attempt.time_taken / 60)}:{(attempt.time_taken % 60).toString().padStart(2, '0')}
+            Total Time: {attempt.time_taken && !isNaN(attempt.time_taken) 
+              ? `${Math.floor(attempt.time_taken / 60)}:${(attempt.time_taken % 60).toString().padStart(2, '0')}`
+              : '--:--'
+            }
           </div>
           <div className="text-xs text-gray-500 mt-1">
             💡 Time is used for tie-breaking on leaderboards
@@ -832,7 +843,12 @@ function QuizResultsScreen({ result, questions, onShare, leaderboard, loadingLea
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                       <span className="text-green-400">{entry.score}/{entry.maxScore}</span>
-                      <span className="text-gray-400">{Math.floor(entry.totalTime / 60)}:{(entry.totalTime % 60).toString().padStart(2, '0')}</span>
+                      <span className="text-gray-400">
+                      {entry.totalTime && !isNaN(entry.totalTime) 
+                        ? `${Math.floor(entry.totalTime / 60)}:${(entry.totalTime % 60).toString().padStart(2, '0')}`
+                        : '--:--'
+                      }
+                    </span>
                     </div>
                   </div>
                 ))}

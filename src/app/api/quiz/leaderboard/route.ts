@@ -31,7 +31,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ leaderboard: [], error: error.message }, { status: 200 })
     }
     
-    return NextResponse.json({ leaderboard: data || [] })
+    // Map database fields to frontend expectations
+    const mappedData = (data || []).map((entry: any) => ({
+      id: entry.id,
+      username: entry.username,
+      score: entry.score,
+      maxScore: entry.max_score,
+      percentage: entry.percentage,
+      totalTime: entry.total_time,
+      quizDate: entry.quiz_date,
+      completedAt: entry.completed_at
+    }))
+    
+    return NextResponse.json({ leaderboard: mappedData })
   } catch (error) {
     console.error('API Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
