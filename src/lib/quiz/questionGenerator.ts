@@ -181,8 +181,8 @@ export class QuizQuestionGenerator {
       ]
     }
     
-    // Generate easy questions (7) - ensure unique fights
-    for (let i = 0; i < 7 && shuffledFights.length > usedFights.size; i++) {
+    // Generate easy questions - ensure unique fights
+    for (let i = 0; i < config.difficulty_distribution.easy && shuffledFights.length > usedFights.size; i++) {
       const fight = this.getUnusedFight(shuffledFights, usedFights)
       if (!fight) break
       
@@ -193,15 +193,15 @@ export class QuizQuestionGenerator {
         id: `easy-${i}`,
         fight_id: fight.id,
         difficulty: 'easy',
-        points: 10,
+        points: config.points_distribution.easy,
         ...questionData
       })
       
       usedFights.add(fight.id)
     }
     
-    // Generate medium questions (2) - ensure unique fights
-    for (let i = 0; i < 2 && shuffledFights.length > usedFights.size; i++) {
+    // Generate medium questions - ensure unique fights
+    for (let i = 0; i < config.difficulty_distribution.medium && shuffledFights.length > usedFights.size; i++) {
       const fight = this.getUnusedFight(shuffledFights, usedFights)
       if (!fight) break
       
@@ -212,28 +212,30 @@ export class QuizQuestionGenerator {
         id: `medium-${i}`,
         fight_id: fight.id,
         difficulty: 'medium',
-        points: 20,
+        points: config.points_distribution.medium,
         ...questionData
       })
       
       usedFights.add(fight.id)
     }
     
-    // Generate hard question (1) - ensure unique fight
-    if (shuffledFights.length > usedFights.size) {
+    // Generate hard questions - ensure unique fights
+    for (let i = 0; i < config.difficulty_distribution.hard && shuffledFights.length > usedFights.size; i++) {
       const fight = this.getUnusedFight(shuffledFights, usedFights)
-      if (fight) {
-        const template = questionTemplates.hard[Math.floor(rng() * questionTemplates.hard.length)]
-        const questionData = template(fight)
-        
-        questions.push({
-          id: 'hard-1',
-          fight_id: fight.id,
-          difficulty: 'hard',
-          points: 30,
-          ...questionData
-        })
-      }
+      if (!fight) break
+      
+      const template = questionTemplates.hard[Math.floor(rng() * questionTemplates.hard.length)]
+      const questionData = template(fight)
+      
+      questions.push({
+        id: `hard-${i}`,
+        fight_id: fight.id,
+        difficulty: 'hard',
+        points: config.points_distribution.hard,
+        ...questionData
+      })
+      
+      usedFights.add(fight.id)
     }
     
     return this.shuffleArray(questions, rng)
