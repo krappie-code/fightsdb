@@ -176,6 +176,19 @@ const MOCK_FIGHTS = [
     time: '5:00',
     weight_class: 'Welterweight',
     title_fight: false
+  },
+  // April 11, 2026 event - NEW UFC 327
+  {
+    id: '15',
+    event: { name: 'UFC 327: Procházka vs. Ulberg', date: '2026-04-11', location: 'Miami, FL' },
+    fighter1: { name: 'Carlos Ulberg', nickname: 'Black Jag' },
+    fighter2: { name: 'Jiří Procházka', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 1,
+    time: '3:45',
+    weight_class: 'Light Heavyweight',
+    title_fight: true
   }
 ]
 
