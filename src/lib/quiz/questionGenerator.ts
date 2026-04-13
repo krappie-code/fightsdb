@@ -177,7 +177,7 @@ const MOCK_FIGHTS = [
     weight_class: 'Welterweight',
     title_fight: false
   },
-  // April 11, 2026 event - NEW UFC 327
+  // April 11, 2026 event - UFC 327 Main Card
   {
     id: '15',
     event: { name: 'UFC 327: Procházka vs. Ulberg', date: '2026-04-11', location: 'Miami, FL' },
@@ -189,6 +189,54 @@ const MOCK_FIGHTS = [
     time: '3:45',
     weight_class: 'Light Heavyweight',
     title_fight: true
+  },
+  {
+    id: '16',
+    event: { name: 'UFC 327: Procházka vs. Ulberg', date: '2026-04-11', location: 'Miami, FL' },
+    fighter1: { name: 'Belal Muhammad', nickname: 'Remember The Name' },
+    fighter2: { name: 'Stephen Thompson', nickname: 'Wonderboy' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '17',
+    event: { name: 'UFC 327: Procházka vs. Ulberg', date: '2026-04-11', location: 'Miami, FL' },
+    fighter1: { name: 'Tatiana Suarez', nickname: '' },
+    fighter2: { name: 'Amanda Lemos', nickname: 'Amandinha' },
+    result: 'Win',
+    method: 'Submission',
+    round: 2,
+    time: '4:22',
+    weight_class: 'Women\'s Strawweight',
+    title_fight: false
+  },
+  {
+    id: '18',
+    event: { name: 'UFC 327: Procházka vs. Ulberg', date: '2026-04-11', location: 'Miami, FL' },
+    fighter1: { name: 'Rob Font', nickname: '' },
+    fighter2: { name: 'Cory Sandhagen', nickname: 'Sandman' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '19',
+    event: { name: 'UFC 327: Procházka vs. Ulberg', date: '2026-04-11', location: 'Miami, FL' },
+    fighter1: { name: 'Mackenzie Dern', nickname: '' },
+    fighter2: { name: 'Jessica Andrade', nickname: 'Bate Estaca' },
+    result: 'Win',
+    method: 'Submission',
+    round: 1,
+    time: '2:38',
+    weight_class: 'Women\'s Strawweight',
+    title_fight: false
   }
 ]
 
