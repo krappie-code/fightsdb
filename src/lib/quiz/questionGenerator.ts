@@ -237,6 +237,67 @@ const MOCK_FIGHTS = [
     time: '2:38',
     weight_class: 'Women\'s Strawweight',
     title_fight: false
+  },
+  // April 18, 2026 event - UFC Fight Night: Burns vs Malott Main Card
+  {
+    id: '20',
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    fighter1: { name: 'Mike Malott', nickname: '' },
+    fighter2: { name: 'Gilbert Burns', nickname: 'Durinho' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 3,
+    time: '2:08',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '21',
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    fighter1: { name: 'Charles Jourdain', nickname: 'Air' },
+    fighter2: { name: 'Kyler Phillips', nickname: 'The Matrix' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '22',
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    fighter1: { name: 'Jai Herbert', nickname: 'Black Country Banger' },
+    fighter2: { name: 'Mandel Nallo', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 1,
+    time: '2:05',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  {
+    id: '23',
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    fighter1: { name: 'Jasmine Jasudavicius', nickname: '' },
+    fighter2: { name: 'Karine Silva', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Women\'s Flyweight',
+    title_fight: false
+  },
+  {
+    id: '24',
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    fighter1: { name: 'Gauge Young', nickname: '' },
+    fighter2: { name: 'Thiago Moisés', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Lightweight',
+    title_fight: false
   }
 ]
 
