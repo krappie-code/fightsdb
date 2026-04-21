@@ -238,10 +238,10 @@ const MOCK_FIGHTS = [
     weight_class: 'Women\'s Strawweight',
     title_fight: false
   },
-  // April 18, 2026 event - UFC Fight Night: Burns vs Malott Main Card
+  // April 20, 2026 event - UFC Winnipeg: Burns vs Malott Main Card
   {
     id: '20',
-    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-20', location: 'Winnipeg, Canada' },
     fighter1: { name: 'Mike Malott', nickname: '' },
     fighter2: { name: 'Gilbert Burns', nickname: 'Durinho' },
     result: 'Win',
@@ -253,7 +253,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '21',
-    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-20', location: 'Winnipeg, Canada' },
     fighter1: { name: 'Charles Jourdain', nickname: 'Air' },
     fighter2: { name: 'Kyler Phillips', nickname: 'The Matrix' },
     result: 'Win',
@@ -265,7 +265,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '22',
-    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-20', location: 'Winnipeg, Canada' },
     fighter1: { name: 'Jai Herbert', nickname: 'Black Country Banger' },
     fighter2: { name: 'Mandel Nallo', nickname: '' },
     result: 'Win',
@@ -277,7 +277,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '23',
-    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-20', location: 'Winnipeg, Canada' },
     fighter1: { name: 'Jasmine Jasudavicius', nickname: '' },
     fighter2: { name: 'Karine Silva', nickname: '' },
     result: 'Win',
@@ -289,7 +289,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '24',
-    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-18', location: 'Winnipeg, Canada' },
+    event: { name: 'UFC Fight Night: Burns vs. Malott', date: '2026-04-20', location: 'Winnipeg, Canada' },
     fighter1: { name: 'Gauge Young', nickname: '' },
     fighter2: { name: 'Thiago Moisés', nickname: '' },
     result: 'Win',
