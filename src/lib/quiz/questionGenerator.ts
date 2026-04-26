@@ -298,6 +298,79 @@ const MOCK_FIGHTS = [
     time: '5:00',
     weight_class: 'Lightweight',
     title_fight: false
+  },
+  // April 25, 2026 event - UFC Fight Night: Sterling vs Zalal Main Card
+  {
+    id: '25',
+    event: { name: 'UFC Fight Night: Sterling vs. Zalal', date: '2026-04-25', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Aljamain Sterling', nickname: 'Funk Master' },
+    fighter2: { name: 'Youssef Zalal', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Featherweight',
+    title_fight: false
+  },
+  {
+    id: '26',
+    event: { name: 'UFC Fight Night: Sterling vs. Zalal', date: '2026-04-25', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Joselyne Edwards', nickname: 'La Pantera' },
+    fighter2: { name: 'Norma Dumont', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Women\'s Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '27',
+    event: { name: 'UFC Fight Night: Sterling vs. Zalal', date: '2026-04-25', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Rafa Garcia', nickname: '' },
+    fighter2: { name: 'Jesse Hernandez', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Featherweight',
+    title_fight: false
+  },
+  {
+    id: '28',
+    event: { name: 'UFC Fight Night: Sterling vs. Zalal', date: '2026-04-25', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Davey Grant', nickname: '' },
+    fighter2: { name: 'Adrian Luna Martinetti', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '29',
+    event: { name: 'UFC Fight Night: Sterling vs. Zalal', date: '2026-04-25', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Raoni Barcelos', nickname: '' },
+    fighter2: { name: 'Montel Jackson', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '30',
+    event: { name: 'UFC Fight Night: Sterling vs. Zalal', date: '2026-04-25', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Ryan Spann', nickname: 'Superman' },
+    fighter2: { name: 'Marcus Buchecha', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 2,
+    time: '2:15',
+    weight_class: 'Heavyweight',
+    title_fight: false
   }
 ]
 
