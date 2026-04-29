@@ -214,6 +214,25 @@ export async function GET(request: Request) {
 
     if (log.length === 0) log.push('No changes')
 
+    // Also sync quiz questions if we have updates
+    if (log.length > 1) { // More than just 'No changes'
+      try {
+        const quizSyncResponse = await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'}/api/sync-quiz`, {
+          method: 'GET',
+          headers: CRON_SECRET ? { 'authorization': `Bearer ${CRON_SECRET}` } : {}
+        })
+        
+        if (quizSyncResponse.ok) {
+          const quizResult = await quizSyncResponse.json()
+          log.push('✅ Quiz questions synced from database')
+        } else {
+          log.push('⚠️ Quiz sync failed (continuing anyway)')
+        }
+      } catch (quizError) {
+        log.push('⚠️ Quiz sync error (continuing anyway)')
+      }
+    }
+
     return NextResponse.json({ ok: true, log, timestamp: new Date().toISOString() })
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err.message }, { status: 500 })
