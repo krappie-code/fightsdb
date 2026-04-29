@@ -371,6 +371,67 @@ const MOCK_FIGHTS = [
     time: '2:15',
     weight_class: 'Heavyweight',
     title_fight: false
+  },
+  // April 27, 2026 event - UFC Fight Night: Makhachev vs Tsarukyan
+  {
+    id: '20',
+    event: { name: 'UFC Fight Night: Makhachev vs. Tsarukyan', date: '2026-04-27', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Islam Makhachev', nickname: '' },
+    fighter2: { name: 'Arman Tsarukyan', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Lightweight',
+    title_fight: true
+  },
+  {
+    id: '21',
+    event: { name: 'UFC Fight Night: Makhachev vs. Tsarukyan', date: '2026-04-27', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Javier Mendez', nickname: '' },
+    fighter2: { name: 'Rafael Dos Anjos', nickname: 'RDA' },
+    result: 'Win',
+    method: 'Submission',
+    round: 2,
+    time: '3:42',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '22',
+    event: { name: 'UFC Fight Night: Makhachev vs. Tsarukyan', date: '2026-04-27', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Geoff Neal', nickname: 'Handz of Steel' },
+    fighter2: { name: 'Ian Machado Garry', nickname: 'The Future' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '23',
+    event: { name: 'UFC Fight Night: Makhachev vs. Tsarukyan', date: '2026-04-27', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Kai Kara-France', nickname: 'Don\'t Blink' },
+    fighter2: { name: 'Brandon Royval', nickname: 'Raw Dawg' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 1,
+    time: '4:18',
+    weight_class: 'Flyweight',
+    title_fight: false
+  },
+  {
+    id: '24',
+    event: { name: 'UFC Fight Night: Makhachev vs. Tsarukyan', date: '2026-04-27', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Miranda Maverick', nickname: 'Fear the' },
+    fighter2: { name: 'Maycee Barber', nickname: 'The Future' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Women\'s Flyweight',
+    title_fight: false
   }
 ]
 
