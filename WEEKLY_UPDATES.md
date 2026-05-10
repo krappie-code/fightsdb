@@ -25,6 +25,8 @@
    - Verify quiz loads with new questions
 
 ## Recent Updates Log
+- **May 10, 2026**: ❌ CHECK FAILED - Missing Brave API key for web search. Could not check for events May 7-10. Manual check required.
+- **May 6, 2026**: Checked for events May 1-6 - No new UFC events found to add (web access limited)
 - **April 30, 2026**: 🚨 FOUND MISSED EVENT! Added UFC Fight Night: Della Maddalene vs. Prates (Apr 28, Perth) - Full main card (5 fights)
 - **April 26, 2026**: 🚨 FOUND MISSED EVENT! Added UFC Fight Night: Sterling vs. Zalal (Apr 25) - Full main card (6 fights)
 - **April 26, 2026**: Checked for events Apr 21-26 - No new UFC events found to add
