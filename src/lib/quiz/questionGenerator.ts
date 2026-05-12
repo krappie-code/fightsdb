@@ -432,6 +432,140 @@ const MOCK_FIGHTS = [
     time: '4:12',
     weight_class: 'Lightweight',
     title_fight: false
+  },
+  // May 10, 2026 event - UFC 328: Chimaev vs Strickland Main Card  
+  {
+    id: '36',
+    event: { name: 'UFC 328: Chimaev vs. Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'Sean Strickland', nickname: 'Tarzan' },
+    fighter2: { name: 'Khamzat Chimaev', nickname: 'Borz' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Middleweight',
+    title_fight: true
+  },
+  {
+    id: '37', 
+    event: { name: 'UFC 328: Chimaev vs. Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'Joshua Van', nickname: '' },
+    fighter2: { name: 'Tatsuro Taira', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 5,
+    time: '1:32',
+    weight_class: 'Flyweight',
+    title_fight: true
+  },
+  {
+    id: '38',
+    event: { name: 'UFC 328: Chimaev vs. Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'Alexander Volkov', nickname: 'Drago' },
+    fighter2: { name: 'Waldo Cortes Acosta', nickname: 'Salsa Boy' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Heavyweight',
+    title_fight: false
+  },
+  {
+    id: '39',
+    event: { name: 'UFC 328: Chimaev vs. Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'Sean Brady', nickname: '' },
+    fighter2: { name: 'Joaquin Buckley', nickname: 'New Mansa' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '40',
+    event: { name: 'UFC 328: Chimaev vs. Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'King Green', nickname: '' },
+    fighter2: { name: 'Jeremy Stephens', nickname: 'Lil Heathen' },
+    result: 'Win',
+    method: 'Submission',
+    round: 1,
+    time: '4:20',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  // May 5, 2026 event - UFC Perth: Updated Main Card
+  {
+    id: '41',
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    fighter1: { name: 'Carlos Prates', nickname: 'The Nightmare' },
+    fighter2: { name: 'Jack Della Maddalena', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 3,
+    time: '3:17',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '42',
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    fighter1: { name: 'Quillan Salkilld', nickname: '' },
+    fighter2: { name: 'Beneil Dariush', nickname: 'Benny' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 1,
+    time: '3:29',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  {
+    id: '43',
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    fighter1: { name: 'Steve Erceg', nickname: 'Astroboy' },
+    fighter2: { name: 'Tim Elliott', nickname: 'The Great' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Flyweight',
+    title_fight: false
+  },
+  {
+    id: '44',
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    fighter1: { name: 'Marwan Rahiki', nickname: '' },
+    fighter2: { name: 'Ollie Schmid', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 1,
+    time: '2:47',
+    weight_class: 'Featherweight',
+    title_fight: false
+  },
+  {
+    id: '45',
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    fighter1: { name: 'Brando Peričić', nickname: 'The Balkan Bear' },
+    fighter2: { name: 'Shamil Gaziev', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 2,
+    time: '3:44',
+    weight_class: 'Heavyweight',
+    title_fight: false
+  },
+  {
+    id: '46',
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    fighter1: { name: 'Louie Sutherland', nickname: 'The Vanilla Gorilla' },
+    fighter2: { name: 'Tai Tuivasa', nickname: 'Bam Bam' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Heavyweight',
+    title_fight: false
   }
 ]
 
