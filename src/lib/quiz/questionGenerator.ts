@@ -494,10 +494,10 @@ const MOCK_FIGHTS = [
     weight_class: 'Lightweight',
     title_fight: false
   },
-  // May 5, 2026 event - UFC Perth: Updated Main Card
+  // May 9, 2026 event - UFC Perth: Updated Main Card
   {
     id: '41',
-    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-09', location: 'Perth, Australia' },
     fighter1: { name: 'Carlos Prates', nickname: 'The Nightmare' },
     fighter2: { name: 'Jack Della Maddalena', nickname: '' },
     result: 'Win',
@@ -509,7 +509,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '42',
-    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-09', location: 'Perth, Australia' },
     fighter1: { name: 'Quillan Salkilld', nickname: '' },
     fighter2: { name: 'Beneil Dariush', nickname: 'Benny' },
     result: 'Win',
@@ -521,7 +521,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '43',
-    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-09', location: 'Perth, Australia' },
     fighter1: { name: 'Steve Erceg', nickname: 'Astroboy' },
     fighter2: { name: 'Tim Elliott', nickname: 'The Great' },
     result: 'Win',
@@ -533,7 +533,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '44',
-    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-09', location: 'Perth, Australia' },
     fighter1: { name: 'Marwan Rahiki', nickname: '' },
     fighter2: { name: 'Ollie Schmid', nickname: '' },
     result: 'Win',
@@ -545,7 +545,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '45',
-    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-09', location: 'Perth, Australia' },
     fighter1: { name: 'Brando Peričić', nickname: 'The Balkan Bear' },
     fighter2: { name: 'Shamil Gaziev', nickname: '' },
     result: 'Win',
@@ -557,7 +557,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '46',
-    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-05', location: 'Perth, Australia' },
+    event: { name: 'UFC Perth: Della Maddalena vs. Prates', date: '2026-05-09', location: 'Perth, Australia' },
     fighter1: { name: 'Louie Sutherland', nickname: 'The Vanilla Gorilla' },
     fighter2: { name: 'Tai Tuivasa', nickname: 'Bam Bam' },
     result: 'Win',
