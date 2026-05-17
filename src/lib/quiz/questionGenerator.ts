@@ -3,6 +3,105 @@ import { QuizQuestion, DailyQuizConfig, DEFAULT_DAILY_CONFIG } from '@/types/qui
 
 // Updated mock fight data with recent events
 const MOCK_FIGHTS = [
+  // May 16, 2026 - UFC Fight Night: Allen vs Costa
+  {
+    id: '50',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Arnold Allen', nickname: '' },
+    fighter2: { name: 'Melquizael Costa', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Featherweight',
+    title_fight: false
+  },
+  {
+    id: '49',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Khaos Williams', nickname: '' },
+    fighter2: { name: 'Nikolay Veretennikov', nickname: '' },
+    result: 'Win',
+    method: 'TKO',
+    round: 1,
+    time: '3:31',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '48',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Juan Diaz', nickname: '' },
+    fighter2: { name: 'Malcolm Wellmaker', nickname: '' },
+    result: 'Win',
+    method: 'Submission',
+    round: 2,
+    time: '4:08',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  // May 10, 2026 - UFC 328: Chimaev vs Strickland
+  {
+    id: '47',
+    event: { name: 'UFC 328: Chimaev vs Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'Sean Strickland', nickname: '' },
+    fighter2: { name: 'Khamzat Chimaev', nickname: 'Borz' },
+    result: 'Win',
+    method: 'Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Middleweight',
+    title_fight: true
+  },
+  {
+    id: '46',
+    event: { name: 'UFC 328: Chimaev vs Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'Joshua Van', nickname: '' },
+    fighter2: { name: 'Tatsuro Taira', nickname: '' },
+    result: 'Win',
+    method: 'TKO',
+    round: 5,
+    time: '1:32',
+    weight_class: 'Flyweight',
+    title_fight: true
+  },
+  {
+    id: '45',
+    event: { name: 'UFC 328: Chimaev vs Strickland', date: '2026-05-10', location: 'Newark, NJ' },
+    fighter1: { name: 'King Green', nickname: '' },
+    fighter2: { name: 'Jeremy Stephens', nickname: 'Lil Heathen' },
+    result: 'Win',
+    method: 'Submission',
+    round: 1,
+    time: '4:20',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  // May 9, 2026 - UFC Perth
+  {
+    id: '44',
+    event: { name: 'UFC Perth: Della Maddalena vs Prates', date: '2026-05-09', location: 'Perth, Australia' },
+    fighter1: { name: 'Carlos Prates', nickname: 'The Nightmare' },
+    fighter2: { name: 'Jack Della Maddalena', nickname: '' },
+    result: 'Win',
+    method: 'TKO',
+    round: 3,
+    time: '3:17',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '43',
+    event: { name: 'UFC Perth: Della Maddalena vs Prates', date: '2026-05-09', location: 'Perth, Australia' },
+    fighter1: { name: 'Quillan Salkilld', nickname: '' },
+    fighter2: { name: 'Beneil Dariush', nickname: '' },
+    result: 'Win',
+    method: 'TKO',
+    round: 1,
+    time: '3:29',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
   // Recent - March 28, 2026
   {
     id: '6',
