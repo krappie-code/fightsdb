@@ -566,6 +566,56 @@ const MOCK_FIGHTS = [
     time: '5:00',
     weight_class: 'Heavyweight',
     title_fight: false
+  },
+  // May 16, 2026 event - UFC Fight Night: Allen vs Costa Main Card
+  {
+    id: '47',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Khaos Williams', nickname: '' },
+    fighter2: { name: 'Nikolay Veretennikov', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 1,
+    time: '3:31',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  // Select UFC Fight Night: Allen vs Costa Prelim Results
+  {
+    id: '48',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Tommy Gantt', nickname: '' },
+    fighter2: { name: 'Artur Minev', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 2,
+    time: '2:51',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  {
+    id: '49',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Ketlen Vieira', nickname: '' },
+    fighter2: { name: 'Jacqueline Cavalcanti', nickname: '' },
+    result: 'Win',
+    method: 'Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Women\'s Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '50',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Cody Brundage', nickname: '' },
+    fighter2: { name: 'Andre Petroski', nickname: '' },
+    result: 'Win',
+    method: 'KO/TKO',
+    round: 2,
+    time: '0:44',
+    weight_class: 'Middleweight',
+    title_fight: false
   }
 ]
 
