@@ -3,10 +3,10 @@ import { QuizQuestion, DailyQuizConfig, DEFAULT_DAILY_CONFIG } from '@/types/qui
 
 // Updated mock fight data with recent events
 const MOCK_FIGHTS = [
-  // May 16, 2026 - UFC Fight Night: Allen vs Costa
+  // May 18, 2026 - UFC Fight Night: Allen vs Costa - COMPLETE RESULTS
   {
-    id: '53',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    id: '60',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
     fighter1: { name: 'Arnold Allen', nickname: '' },
     fighter2: { name: 'Melquizael Costa', nickname: '' },
     result: 'Win',
@@ -17,8 +17,8 @@ const MOCK_FIGHTS = [
     title_fight: false
   },
   {
-    id: '52',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    id: '59',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
     fighter1: { name: 'DooHo Choi', nickname: 'The Korean Superboy' },
     fighter2: { name: 'Daniel Santos', nickname: '' },
     result: 'Win',
@@ -29,8 +29,8 @@ const MOCK_FIGHTS = [
     title_fight: false
   },
   {
-    id: '51',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    id: '58',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
     fighter1: { name: 'Juan Diaz', nickname: '' },
     fighter2: { name: 'Malcolm Wellmaker', nickname: '' },
     result: 'Win',
@@ -41,8 +41,8 @@ const MOCK_FIGHTS = [
     title_fight: false
   },
   {
-    id: '50',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    id: '57',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
     fighter1: { name: 'Modestas Bukauskas', nickname: 'The Baltic Gladiator' },
     fighter2: { name: 'Christian Edwards', nickname: '' },
     result: 'Win',
@@ -53,8 +53,8 @@ const MOCK_FIGHTS = [
     title_fight: false
   },
   {
-    id: '49',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    id: '56',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
     fighter1: { name: 'Benardo Sopaj', nickname: 'The Lion King' },
     fighter2: { name: 'Timmy Cuamba', nickname: '' },
     result: 'Win',
@@ -65,8 +65,8 @@ const MOCK_FIGHTS = [
     title_fight: false
   },
   {
-    id: '48',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
+    id: '55',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
     fighter1: { name: 'Khaos Williams', nickname: '' },
     fighter2: { name: 'Nikolay Veretennikov', nickname: '' },
     result: 'Win',
@@ -74,6 +74,91 @@ const MOCK_FIGHTS = [
     round: 1,
     time: '3:31',
     weight_class: 'Welterweight',
+    title_fight: false
+  },
+  // Preliminary Card Results
+  {
+    id: '54',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Ivan Erslan', nickname: '' },
+    fighter2: { name: 'Tuco Tokkos', nickname: '' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Light Heavyweight',
+    title_fight: false
+  },
+  {
+    id: '53',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Tommy Gantt', nickname: '' },
+    fighter2: { name: 'Artur Minev', nickname: '' },
+    result: 'Win',
+    method: 'TKO (Strikes)',
+    round: 2,
+    time: '2:51',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  {
+    id: '52',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Ketlen Vieira', nickname: '' },
+    fighter2: { name: 'Jacqueline Cavalcanti', nickname: '' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Women\'s Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '51',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Cody Brundage', nickname: '' },
+    fighter2: { name: 'Andre Petroski', nickname: '' },
+    result: 'Win',
+    method: 'TKO (Strikes)',
+    round: 2,
+    time: '0:44',
+    weight_class: 'Middleweight',
+    title_fight: false
+  },
+  {
+    id: '50',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Alice Ardelean', nickname: '' },
+    fighter2: { name: 'Polyana Viana', nickname: '' },
+    result: 'Win',
+    method: 'Submission (Capsule Lock)',
+    round: 2,
+    time: '4:36',
+    weight_class: 'Women\'s Strawweight',
+    title_fight: false
+  },
+  {
+    id: '49',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Luis Gurule', nickname: '' },
+    fighter2: { name: 'Daniel Barez', nickname: '' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Flyweight',
+    title_fight: false
+  },
+  {
+    id: '48',
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Nicolle Caliari', nickname: '' },
+    fighter2: { name: 'Shauna Bannon', nickname: '' },
+    result: 'Win',
+    method: 'Submission (Arm-Triangle Choke)',
+    round: 3,
+    time: '3:08',
+    weight_class: 'Women\'s Strawweight',
     title_fight: false
   },
   // May 10, 2026 - UFC 328: Chimaev vs Strickland
