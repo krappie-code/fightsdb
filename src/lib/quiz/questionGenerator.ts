@@ -6,7 +6,7 @@ const MOCK_FIGHTS = [
   // May 18, 2026 - UFC Fight Night: Allen vs Costa - COMPLETE RESULTS
   {
     id: '60',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Arnold Allen', nickname: '' },
     fighter2: { name: 'Melquizael Costa', nickname: '' },
     result: 'Win',
@@ -18,7 +18,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '59',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'DooHo Choi', nickname: 'The Korean Superboy' },
     fighter2: { name: 'Daniel Santos', nickname: '' },
     result: 'Win',
@@ -30,7 +30,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '58',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Juan Diaz', nickname: '' },
     fighter2: { name: 'Malcolm Wellmaker', nickname: '' },
     result: 'Win',
@@ -42,7 +42,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '57',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Modestas Bukauskas', nickname: 'The Baltic Gladiator' },
     fighter2: { name: 'Christian Edwards', nickname: '' },
     result: 'Win',
@@ -54,7 +54,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '56',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Benardo Sopaj', nickname: 'The Lion King' },
     fighter2: { name: 'Timmy Cuamba', nickname: '' },
     result: 'Win',
@@ -66,7 +66,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '55',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Khaos Williams', nickname: '' },
     fighter2: { name: 'Nikolay Veretennikov', nickname: '' },
     result: 'Win',
@@ -79,7 +79,7 @@ const MOCK_FIGHTS = [
   // Preliminary Card Results
   {
     id: '54',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Ivan Erslan', nickname: '' },
     fighter2: { name: 'Tuco Tokkos', nickname: '' },
     result: 'Win',
@@ -91,7 +91,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '53',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Tommy Gantt', nickname: '' },
     fighter2: { name: 'Artur Minev', nickname: '' },
     result: 'Win',
@@ -103,7 +103,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '52',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Ketlen Vieira', nickname: '' },
     fighter2: { name: 'Jacqueline Cavalcanti', nickname: '' },
     result: 'Win',
@@ -115,7 +115,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '51',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Cody Brundage', nickname: '' },
     fighter2: { name: 'Andre Petroski', nickname: '' },
     result: 'Win',
@@ -127,7 +127,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '50',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Alice Ardelean', nickname: '' },
     fighter2: { name: 'Polyana Viana', nickname: '' },
     result: 'Win',
@@ -139,7 +139,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '49',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Luis Gurule', nickname: '' },
     fighter2: { name: 'Daniel Barez', nickname: '' },
     result: 'Win',
@@ -151,7 +151,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '48',
-    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-18', location: 'Las Vegas, NV' },
+    event: { name: 'UFC Fight Night: Allen vs Costa', date: '2026-05-16', location: 'Las Vegas, NV' },
     fighter1: { name: 'Nicolle Caliari', nickname: '' },
     fighter2: { name: 'Shauna Bannon', nickname: '' },
     result: 'Win',
