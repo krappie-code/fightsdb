@@ -3,6 +3,103 @@ import { QuizQuestion, DailyQuizConfig, DEFAULT_DAILY_CONFIG } from '@/types/qui
 
 // Updated mock fight data with recent events
 const MOCK_FIGHTS = [
+  // May 30, 2026 - UFC Fight Night: Song vs Figueiredo - Macau, China
+  {
+    id: '68',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'Luis Felipe Dias', nickname: '' },
+    fighter2: { name: 'YiSak Lee', nickname: '' },
+    result: 'Win',
+    method: 'TKO (Strikes)',
+    round: 1,
+    time: '3:40',
+    weight_class: 'Middleweight',
+    title_fight: false
+  },
+  {
+    id: '67',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'José Souza', nickname: '' },
+    fighter2: { name: 'Ding Meng', nickname: '' },
+    result: 'Win',
+    method: 'Split Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '66',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'Cody Haddon', nickname: '' },
+    fighter2: { name: 'Aoriqileng', nickname: 'The Mongolian Murderer' },
+    result: 'Win',
+    method: 'TKO (Knee to Liver)',
+    round: 2,
+    time: '2:11',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '65',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'Rei Tsuruya', nickname: '' },
+    fighter2: { name: 'Luis Gurule', nickname: '' },
+    result: 'Win',
+    method: 'Submission (Rear-Naked Choke)',
+    round: 1,
+    time: '3:19',
+    weight_class: 'Flyweight',
+    title_fight: false
+  },
+  {
+    id: '64',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'Angela Hill', nickname: 'Overkill' },
+    fighter2: { name: 'Xiong Jingnan', nickname: '' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Strawweight',
+    title_fight: false
+  },
+  {
+    id: '63',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'Rodrigo Vera', nickname: 'El Gato Loco' },
+    fighter2: { name: 'Zhu Kangjie', nickname: '' },
+    result: 'Win',
+    method: 'TKO (Strikes)',
+    round: 1,
+    time: '1:50',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '62',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'Jaqueline Amorim', nickname: '' },
+    fighter2: { name: 'Loma Lookboonmee', nickname: '' },
+    result: 'Win',
+    method: 'Submission (Armbar)',
+    round: 1,
+    time: '4:04',
+    weight_class: 'Strawweight',
+    title_fight: false
+  },
+  {
+    id: '61',
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    fighter1: { name: 'Sumudaerji', nickname: 'The Tibetan Eagle' },
+    fighter2: { name: 'Alex Perez', nickname: '' },
+    result: 'No Contest',
+    method: 'No Contest (Accidental Low Blow)',
+    round: 2,
+    time: '1:45',
+    weight_class: 'Flyweight',
+    title_fight: false
+  },
   // May 18, 2026 - UFC Fight Night: Allen vs Costa - COMPLETE RESULTS
   {
     id: '60',
