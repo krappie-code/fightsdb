@@ -3,6 +3,151 @@ import { QuizQuestion, DailyQuizConfig, DEFAULT_DAILY_CONFIG } from '@/types/qui
 
 // Updated mock fight data with recent events
 const MOCK_FIGHTS = [
+  // June 8, 2026 - UFC Fight Night: Muhammad vs Bonfim - Las Vegas, NV
+  {
+    id: '80',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Gabriel Bonfim', nickname: '' },
+    fighter2: { name: 'Belal Muhammad', nickname: 'Remember The Name' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 5,
+    time: '5:00',
+    weight_class: 'Welterweight',
+    title_fight: false
+  },
+  {
+    id: '79',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Brendan Allen', nickname: 'All In' },
+    fighter2: { name: 'Edmen Shahbazyan', nickname: 'The Golden Boy' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Middleweight',
+    title_fight: false
+  },
+  {
+    id: '78',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Tom Nolan', nickname: 'Big Train' },
+    fighter2: { name: 'Farès Ziam', nickname: 'Smile Killer' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  {
+    id: '77',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Bryce Mitchell', nickname: 'Thug Nasty' },
+    fighter2: { name: 'Santiago Luna', nickname: '' },
+    result: 'Win',
+    method: 'Submission (Arm-Triangle Choke)',
+    round: 3,
+    time: '4:52',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '76',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Iwo Baraniewski', nickname: 'Rudy' },
+    fighter2: { name: 'Junior Tafa', nickname: 'Slaughterhouse' },
+    result: 'Win',
+    method: 'TKO (Strikes)',
+    round: 1,
+    time: '1:25',
+    weight_class: 'Light Heavyweight',
+    title_fight: false
+  },
+  {
+    id: '75',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Alessandro Costa', nickname: '' },
+    fighter2: { name: 'Matt Schnell', nickname: 'Danger' },
+    result: 'Win',
+    method: 'TKO (Strikes)',
+    round: 1,
+    time: '2:32',
+    weight_class: 'Flyweight',
+    title_fight: false
+  },
+  {
+    id: '74',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Marcus McGhee', nickname: 'The Maniac' },
+    fighter2: { name: 'John Yannis', nickname: '' },
+    result: 'Win',
+    method: 'Unanimous Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: 'Bantamweight',
+    title_fight: false
+  },
+  {
+    id: '73',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Edgar Chairez', nickname: 'Puro Chicali' },
+    fighter2: { name: 'Bruno Silva', nickname: 'Bulldog' },
+    result: 'Win',
+    method: 'Submission (Rear-Naked Choke)',
+    round: 1,
+    time: '4:13',
+    weight_class: 'Flyweight',
+    title_fight: false
+  },
+  {
+    id: '72',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Chelsea Chandler', nickname: '' },
+    fighter2: { name: 'Priscila Cachoeira', nickname: 'Zombie Girl' },
+    result: 'Win',
+    method: 'Submission (Armbar)',
+    round: 1,
+    time: '3:42',
+    weight_class: "Women's Bantamweight",
+    title_fight: false
+  },
+  {
+    id: '71',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Joanderson Brito', nickname: '' },
+    fighter2: { name: 'Jordan Leavitt', nickname: 'The Monkey King' },
+    result: 'Win',
+    method: 'Submission (Front Choke)',
+    round: 1,
+    time: '4:19',
+    weight_class: 'Lightweight',
+    title_fight: false
+  },
+  {
+    id: '70',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Jeisla Chaves', nickname: 'A Braba' },
+    fighter2: { name: 'Yuneisy Duben', nickname: '' },
+    result: 'Win',
+    method: 'Split Decision',
+    round: 3,
+    time: '5:00',
+    weight_class: "Women's Flyweight",
+    title_fight: false
+  },
+  {
+    id: '69',
+    event: { name: 'UFC Fight Night: Muhammad vs Bonfim', date: '2026-06-08', location: 'Las Vegas, NV' },
+    fighter1: { name: 'Ketlen Souza', nickname: '' },
+    fighter2: { name: 'Ariane Carnelossi', nickname: 'Sorriso' },
+    result: 'Win',
+    method: 'KO (Head Kick)',
+    round: 1,
+    time: '1:34',
+    weight_class: "Women's Strawweight",
+    title_fight: false
+  },
   // May 30, 2026 - UFC Fight Night: Song vs Figueiredo - Macau, China
   {
     id: '68',
