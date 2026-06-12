@@ -148,10 +148,10 @@ const MOCK_FIGHTS = [
     weight_class: "Women's Strawweight",
     title_fight: false
   },
-  // May 30, 2026 - UFC Fight Night: Song vs Figueiredo - Macau, China
+  // June 5, 2026 - UFC Fight Night: Song vs Figueiredo - Macau, China
   {
     id: '68',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'Luis Felipe Dias', nickname: '' },
     fighter2: { name: 'YiSak Lee', nickname: '' },
     result: 'Win',
@@ -163,7 +163,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '67',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'José Souza', nickname: '' },
     fighter2: { name: 'Ding Meng', nickname: '' },
     result: 'Win',
@@ -175,7 +175,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '66',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'Cody Haddon', nickname: '' },
     fighter2: { name: 'Aoriqileng', nickname: 'The Mongolian Murderer' },
     result: 'Win',
@@ -187,7 +187,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '65',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'Rei Tsuruya', nickname: '' },
     fighter2: { name: 'Luis Gurule', nickname: '' },
     result: 'Win',
@@ -199,7 +199,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '64',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'Angela Hill', nickname: 'Overkill' },
     fighter2: { name: 'Xiong Jingnan', nickname: '' },
     result: 'Win',
@@ -211,7 +211,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '63',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'Rodrigo Vera', nickname: 'El Gato Loco' },
     fighter2: { name: 'Zhu Kangjie', nickname: '' },
     result: 'Win',
@@ -223,7 +223,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '62',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'Jaqueline Amorim', nickname: '' },
     fighter2: { name: 'Loma Lookboonmee', nickname: '' },
     result: 'Win',
@@ -235,7 +235,7 @@ const MOCK_FIGHTS = [
   },
   {
     id: '61',
-    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-05-30', location: 'Macau, China' },
+    event: { name: 'UFC Fight Night: Song vs Figueiredo', date: '2026-06-05', location: 'Macau, China' },
     fighter1: { name: 'Sumudaerji', nickname: 'The Tibetan Eagle' },
     fighter2: { name: 'Alex Perez', nickname: '' },
     result: 'No Contest',
